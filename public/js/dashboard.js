@@ -1,14 +1,15 @@
 // Noto — teacher dashboard: every notice with "X of Y opened".
 // Shown in the language the teacher picked (teacher-i18n.js).
 
-import { setupTeacherPage, myNotices, countViews, deleteNotice } from './auth.js';
-import { langInfo, t, uiLang } from './teacher-i18n.js';
+import { setupTeacherPage, myNotices, countViews, deleteNotice, shareBaseUrl } from './auth.js';
+import { audienceLabel, langInfo, t, uiLang } from './teacher-i18n.js';
 
 const $ = (id) => document.getElementById(id);
 
 const state = {
   notices: [],
   counts: {}, // notice id → number of phones that opened it (fetched once, kept when the language changes)
+  baseUrl: '', // start of share links
 };
 
 function el(tag, props = {}, children = []) {
@@ -38,11 +39,13 @@ async function copyLink(link, button) {
   setTimeout(() => (button.textContent = t('copyLink')), 2000);
 }
 
-// "{n} of {total} opened" with the number made big. Word order differs by language,
-// so the sentence is split around {n} instead of being glued together.
+// "{n} of {total} opened" (or just "{n} opened" when the student count was left empty),
+// with the number made big. Word order differs by language, so the sentence is split
+// around {n} instead of being glued together.
 function openedLine(notice) {
   const n = state.counts[notice.id];
-  const [before, after = ''] = t('opened', { n: '\u0000', total: notice.students }).split('\u0000');
+  const key = notice.students ? 'opened' : 'openedNoTotal';
+  const [before, after = ''] = t(key, { n: '\u0000', total: notice.students }).split('\u0000');
   return el('p', { className: 'opened' }, [
     before,
     el('span', { className: 'open-count', textContent: n === undefined ? '…' : n === null ? '?' : String(n) }),
@@ -52,11 +55,11 @@ function openedLine(notice) {
 
 // One row: title, class + date, "X of Y opened" with a bar, and buttons
 function noticeRow(notice) {
-  const link = `${location.origin}/n/${notice.id}`;
+  const link = `${state.baseUrl}/n/${notice.id}`;
   const n = state.counts[notice.id];
   const bar = el('div', { className: 'bar-fill' });
   if (typeof n === 'number') bar.style.width = `${Math.min(100, Math.round((n / notice.students) * 100))}%`;
-  const meter = el('div', { className: 'bar' }, [bar]);
+  const meter = el('div', { className: 'bar', hidden: !notice.students }, [bar]); // a bar needs a total
   meter.setAttribute('role', 'progressbar');
   meter.setAttribute('aria-valuemin', '0');
   meter.setAttribute('aria-valuemax', String(notice.students));
@@ -86,7 +89,7 @@ function noticeRow(notice) {
 
   return el('li', { className: 'card notice-row', lang: langInfo().htmlLang }, [
     el('h2', { textContent: titleOf(notice) }),
-    el('p', { className: 'hint', textContent: [notice.className, formatDate(notice.createdAt)].filter(Boolean).join(' · ') }),
+    el('p', { className: 'hint', textContent: [audienceLabel(notice), formatDate(notice.createdAt)].filter(Boolean).join(' · ') }),
     openedLine(notice),
     meter,
     el('div', { className: 'date-actions' }, [open, copy, remove]),
@@ -100,6 +103,7 @@ function render() {
 
 async function loadDashboard() {
   try {
+    state.baseUrl = await shareBaseUrl();
     state.notices = await myNotices();
     render();
     // Count each notice's opens at the same time, and redraw as each number arrives

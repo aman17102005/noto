@@ -23,13 +23,22 @@ service cloud.firestore {
       return signedIn() && data.ownerId == request.auth.uid;
     }
 
+    // Who the notice is for: { type: "school" } or { type: "classes", classes: ["6A", "6B"] }
+    function validAudience(a) {
+      return a is map
+        && (a.keys().hasOnly(['type']) && a.type == 'school'
+          || a.keys().hasOnly(['type', 'classes']) && a.type == 'classes'
+             && a.classes is list && a.classes.size() >= 1 && a.classes.size() <= 30);
+    }
+
     function validNotice(d) {
-      return d.keys().hasOnly(['ownerId', 'school', 'className', 'students', 'createdAt', 'original', 'languages', 'published'])
-        && d.keys().hasAll(['ownerId', 'school', 'className', 'students', 'createdAt', 'original', 'languages', 'published'])
+      return d.keys().hasOnly(['ownerId', 'school', 'audience', 'students', 'createdAt', 'original', 'languages', 'published'])
+        && d.keys().hasAll(['ownerId', 'school', 'audience', 'students', 'createdAt', 'original', 'languages', 'published'])
         && d.ownerId is string
         && d.school is string && d.school.size() <= 150
-        && d.className is string && d.className.size() > 0 && d.className.size() <= 60
-        && d.students is int && d.students >= 1 && d.students <= 1000
+        && validAudience(d.audience)
+        // students is optional: null, or a whole number from 1 to 5000
+        && (d.students == null || d.students is int && d.students >= 1 && d.students <= 5000)
         && d.createdAt is timestamp
         && d.original is string && d.original.size() > 0 && d.original.size() <= 20000
         && d.languages is map

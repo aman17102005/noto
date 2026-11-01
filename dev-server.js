@@ -6,9 +6,13 @@
 //   4. Loads secrets from .env.local into process.env
 //
 // Run with:  npm run dev
-// To test on your phone (same Wi-Fi):  HOST=0.0.0.0 npm run dev
+// To test on your phone (same Wi-Fi):  npm run dev:phone
+//   This also lets phones open the links and QR codes the teacher page makes, because the
+//   links then use this computer's Wi-Fi address instead of "localhost" (which on a phone
+//   means the phone itself).
 
 import http from 'node:http';
+import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -26,6 +30,14 @@ try {
   console.log('Loaded .env.local');
 } catch {
   console.log('No .env.local found (that is fine for Stage 1)');
+}
+
+// Phone test mode: links and QR codes use this computer's Wi-Fi address (e.g. http://192.168.1.5:3000)
+if (HOST === '0.0.0.0' && !process.env.PUBLIC_URL) {
+  const wifi = Object.values(os.networkInterfaces())
+    .flat()
+    .find((net) => net && net.family === 'IPv4' && !net.internal);
+  if (wifi) process.env.PUBLIC_URL = `http://${wifi.address}:${PORT}`;
 }
 
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
@@ -150,4 +162,8 @@ function sendJson(res, status, data) {
 server.listen(PORT, HOST, () => {
   console.log(`Noto is running at http://localhost:${PORT}`);
   console.log(`Demo notice: http://localhost:${PORT}/n/demo-school`);
+  if (process.env.PUBLIC_URL) {
+    console.log(`Phone test mode: links and QR codes use ${process.env.PUBLIC_URL}`);
+    console.log('Teachers: keep using http://localhost:' + PORT + '/teacher on this computer (Google login needs it).');
+  }
 });

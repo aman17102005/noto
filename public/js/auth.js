@@ -34,12 +34,19 @@ let firebase;
 function startFirebase() {
   firebase ??= (async () => {
     const res = await fetch('/api/config');
-    const settings = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(settings.error || 'Firebase is not set up.');
-    const app = initializeApp(settings);
-    return { auth: getAuth(app), db: getFirestore(app) };
+    const config = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(config.error || 'Firebase is not set up.');
+    const app = initializeApp(config.firebase);
+    return { auth: getAuth(app), db: getFirestore(app), publicUrl: config.publicUrl };
   })();
   return firebase;
+}
+
+// The start of every share link: normally this website's address, but in phone test mode
+// the computer's Wi-Fi address, so phones on the same Wi-Fi can open the links and QR codes.
+export async function shareBaseUrl() {
+  const { publicUrl } = await startFirebase();
+  return publicUrl || location.origin;
 }
 
 // ---------- Login ----------

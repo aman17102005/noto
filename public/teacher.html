@@ -72,15 +72,34 @@
               </div>
             </div>
 
-            <div class="card two-cols">
+            <div class="card">
+              <!-- Who gets this notice: the whole school (e.g. a holiday) or one or more classes -->
+              <fieldset class="audience">
+                <legend class="field-label" data-i18n="audienceTitle">Who is this notice for?</legend>
+                <label class="choice">
+                  <input type="radio" name="audience" value="classes" checked />
+                  <span data-i18n="audienceClasses">One or more classes</span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="audience" value="school" />
+                  <span data-i18n="audienceSchool">Whole school</span>
+                </label>
+              </fieldset>
+
+              <div class="field" id="classes-box">
+                <label class="field-label" for="class-input" data-i18n="classInputLabel">Add a class</label>
+                <div class="copy-row">
+                  <input class="input" id="class-input" maxlength="20" data-i18n-placeholder="classPlaceholder" autocomplete="off" enterkeyhint="done" />
+                  <button class="btn btn-secondary btn-small" type="button" id="add-class" data-i18n="addClass">Add</button>
+                </div>
+                <span class="hint" data-i18n="classesHint">Add each class, for example 6A, then 6B.</span>
+                <ul class="chips" id="class-chips"></ul>
+              </div>
+
               <label class="field">
-                <span class="field-label" data-i18n="className">Class name</span>
-                <input id="class-name" maxlength="60" data-i18n-placeholder="classPlaceholder" autocomplete="off" />
-              </label>
-              <label class="field">
-                <span class="field-label" data-i18n="students">Number of students</span>
-                <input id="students" type="number" inputmode="numeric" min="1" max="1000" data-i18n-placeholder="studentsPlaceholder" />
-                <span class="hint" data-i18n="studentsHint">For the dashboard: "38 of 45 opened".</span>
+                <span class="field-label" data-i18n="students">Number of students (optional)</span>
+                <input id="students" type="number" inputmode="numeric" min="1" max="5000" data-i18n-placeholder="studentsPlaceholder" />
+                <span class="hint" data-i18n="studentsHint">Fill this in to see "38 of 45 opened" on the dashboard. Leave it empty to see just "38 opened".</span>
               </label>
             </div>
 

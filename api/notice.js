@@ -31,7 +31,8 @@ export default async function handler(req, res) {
     res.status(200).json({
       id,
       school: notice.school || '',
-      className: notice.className || '',
+      audience: notice.audience || null,
+      className: notice.className || '', // notices made before "audience" existed
       createdAt: notice.createdAt || '',
       original: notice.original || '',
       languages: notice.languages || {},

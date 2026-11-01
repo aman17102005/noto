@@ -22,6 +22,9 @@ const LANGS = {
       notFound: 'Sorry, we could not find this notice. Please check the link or ask the school.',
       error: 'Could not load the notice. Please check your internet and try again.',
       retry: 'Try again',
+      wholeSchool: 'Whole school',
+      classOne: 'Class {list}',
+      classMany: 'Classes {list}',
     },
   },
   hi: {
@@ -40,6 +43,9 @@ const LANGS = {
       notFound: 'माफ़ कीजिए, यह नोटिस नहीं मिला। कृपया लिंक जाँचें या स्कूल से पूछें।',
       error: 'नोटिस लोड नहीं हो सका। कृपया इंटरनेट जाँचें और फिर से कोशिश करें।',
       retry: 'फिर से कोशिश करें',
+      wholeSchool: 'पूरा स्कूल',
+      classOne: 'कक्षा {list}',
+      classMany: 'कक्षाएँ {list}',
     },
   },
   es: {
@@ -58,6 +64,9 @@ const LANGS = {
       notFound: 'Lo sentimos, no encontramos este aviso. Revise el enlace o pregunte en la escuela.',
       error: 'No se pudo cargar el aviso. Revise su conexión a internet e intente de nuevo.',
       retry: 'Intentar de nuevo',
+      wholeSchool: 'Toda la escuela',
+      classOne: 'Clase {list}',
+      classMany: 'Clases {list}',
     },
   },
   zh: {
@@ -76,6 +85,9 @@ const LANGS = {
       notFound: '抱歉，找不到这个通知。请检查链接或询问学校。',
       error: '无法加载通知。请检查网络后重试。',
       retry: '重试',
+      wholeSchool: '全校',
+      classOne: '班级 {list}',
+      classMany: '班级 {list}',
     },
   },
   vi: {
@@ -94,6 +106,9 @@ const LANGS = {
       notFound: 'Xin lỗi, không tìm thấy thông báo này. Vui lòng kiểm tra đường dẫn hoặc hỏi nhà trường.',
       error: 'Không tải được thông báo. Vui lòng kiểm tra mạng và thử lại.',
       retry: 'Thử lại',
+      wholeSchool: 'Toàn trường',
+      classOne: 'Lớp {list}',
+      classMany: 'Các lớp {list}',
     },
   },
 };
@@ -231,6 +246,16 @@ function showStatus(message, withRetry = false) {
 
 // ---------- Showing the notice ----------
 
+// "Whole school" or "Classes 6A, 6B" in the parent's language
+function audienceLabel(notice, ui) {
+  const audience = notice.audience;
+  if (audience?.type === 'school') return ui.wholeSchool;
+  if (audience?.classes?.length) {
+    return (audience.classes.length > 1 ? ui.classMany : ui.classOne).replace('{list}', audience.classes.join(', '));
+  }
+  return notice.className || ''; // notices made before "audience" existed
+}
+
 function render() {
   const notice = state.notice;
   // If the notice is missing the chosen language, fall back to English
@@ -245,7 +270,7 @@ function render() {
     btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
   }
 
-  $('from').textContent = [notice.school, notice.className].filter(Boolean).join(' · ');
+  $('from').textContent = [notice.school, audienceLabel(notice, ui)].filter(Boolean).join(' · ');
   $('title').textContent = content.title;
   $('summary').textContent = content.summary;
 

@@ -6,16 +6,19 @@
 // The whole page speaks the language the teacher picks (teacher-i18n.js). Picking a language
 // button in the editor also switches the page, so every line is in that one language.
 
-import { setupTeacherPage, loginToken, saveNotice } from './auth.js';
-import { LANGS, langInfo, langName, setUiLang, t, uiLang, hasText } from './teacher-i18n.js';
+import { setupTeacherPage, loginToken, saveNotice, shareBaseUrl } from './auth.js';
+import { LANGS, audienceLabel, langInfo, langName, setUiLang, t, uiLang, hasText } from './teacher-i18n.js';
 
 const LANG_LIST = LANGS.map((l) => l.name).join(' · '); // each name in its own language, so parents find theirs
 const MAX_PHOTO_SIDE = 1600; // pixels — enough to read text, small enough to upload fast
+const MAX_CLASSES = 30;
 
 const $ = (id) => document.getElementById(id);
 
 const state = {
   image: null, // { mimeType, data } — the shrunk photo, ready to send
+  classes: [], // e.g. ["6A", "6B"] when the notice is for some classes, not the whole school
+  baseUrl: '', // start of the share link (website address, or Wi-Fi address in phone test mode)
   draft: null, // the notice being edited
   warnings: [],
   busy: false,
@@ -182,12 +185,16 @@ async function onCreate(event) {
   showError('create-error', '');
 
   const text = $('notice-text').value.trim();
-  const className = $('class-name').value.trim();
-  const students = Number($('students').value);
+  addClass(); // a class typed but not added yet still counts
+  const audience = forWholeSchool() ? { type: 'school' } : { type: 'classes', classes: [...state.classes] };
+  const studentsText = $('students').value.trim();
+  const students = studentsText ? Number(studentsText) : null; // optional
 
   if (!text && !state.image) return showError('create-error', 'errNoInput');
-  if (!className) return showError('create-error', 'errClass');
-  if (!Number.isInteger(students) || students < 1 || students > 1000) return showError('create-error', 'errStudents');
+  if (audience.type === 'classes' && !audience.classes.length) return showError('create-error', 'errClass');
+  if (students !== null && (!Number.isInteger(students) || students < 1 || students > 5000)) {
+    return showError('create-error', 'errStudents');
+  }
 
   setBusy(true);
   const controller = new AbortController();
@@ -209,7 +216,7 @@ async function onCreate(event) {
     }
 
     const { warnings, ...notice } = data.notice;
-    state.draft = { ...notice, className, students };
+    state.draft = { ...notice, audience, students };
     state.warnings = warnings || [];
     renderWarnings();
     renderEditor();
@@ -220,6 +227,45 @@ async function onCreate(event) {
     clearTimeout(timer);
     setBusy(false);
   }
+}
+
+// ---------- Who the notice is for ----------
+
+function forWholeSchool() {
+  return document.querySelector('input[name="audience"]:checked').value === 'school';
+}
+
+// "Class 6a" or "std 6a" → "6A", so every language can put its own word for "class" in front
+function tidyClassName(text) {
+  const name = text.trim().replace(/^(class|std\.?|standard|grade)\s*/i, '').replace(/\s+/g, ' ');
+  return /^\d{1,2}\s?[a-z]?$/i.test(name) ? name.replace(/\s/g, '').toUpperCase() : name;
+}
+
+// Adds what is typed in the class box (several at once if separated by commas)
+function addClass() {
+  const input = $('class-input');
+  for (const part of input.value.split(',')) {
+    const name = tidyClassName(part);
+    const known = state.classes.some((c) => c.toLowerCase() === name.toLowerCase());
+    if (name && !known && state.classes.length < MAX_CLASSES) state.classes.push(name);
+  }
+  input.value = '';
+  drawClasses();
+}
+
+function drawClasses() {
+  $('classes-box').hidden = forWholeSchool();
+  $('class-chips').replaceChildren(
+    ...state.classes.map((name, i) => {
+      const remove = el('button', { type: 'button', className: 'chip-remove', textContent: '✕' });
+      remove.setAttribute('aria-label', t('removeClass', { name }));
+      remove.addEventListener('click', () => {
+        state.classes.splice(i, 1);
+        drawClasses();
+      });
+      return el('li', { className: 'chip' }, [el('span', { textContent: name }), remove]);
+    })
+  );
 }
 
 // ---------- Step 2: check and edit ----------
@@ -372,7 +418,7 @@ async function onPublish() {
   const notice = {
     id: makeId(),
     school: state.draft.school || '',
-    className: state.draft.className,
+    audience: state.draft.audience,
     students: state.draft.students,
     createdAt: new Date().toISOString(),
     original: state.draft.original,
@@ -390,6 +436,7 @@ async function onPublish() {
       /* ignore */
     }
     state.published = notice;
+    state.baseUrl = await shareBaseUrl();
     renderShare();
     show('step-share');
   } catch (err) {
@@ -406,7 +453,7 @@ async function onPublish() {
 
 function renderShare() {
   const notice = state.published;
-  const link = `${location.origin}/n/${notice.id}`;
+  const link = `${state.baseUrl}/n/${notice.id}`;
   $('share-link').value = link;
   $('open-parent').href = link;
 
@@ -420,7 +467,7 @@ function renderShare() {
 
 function whatsappMessage(notice, link) {
   const content = notice.languages[uiLang()];
-  const from = [notice.className, notice.school].filter(Boolean).join(' — ');
+  const from = [audienceLabel(notice), notice.school].filter(Boolean).join(' — ');
   return [
     `📢 *${content.title}*`,
     from,
@@ -516,7 +563,7 @@ function drawQrCard(canvas, link, notice) {
 
   ctx.font = `400 28px ${font}`;
   ctx.fillStyle = '#555555';
-  ctx.fillText([notice.className, notice.school].filter(Boolean).join(' · '), W / 2, y + 10);
+  ctx.fillText([audienceLabel(notice), notice.school].filter(Boolean).join(' · '), W / 2, y + 10);
 }
 
 function downloadQr() {
@@ -531,6 +578,8 @@ function downloadQr() {
 
 function startAgain() {
   $('create-form').reset();
+  state.classes = [];
+  drawClasses();
   drawCharCount();
   removePhoto();
   state.draft = null;
@@ -543,6 +592,7 @@ function startAgain() {
 
 document.addEventListener('noto:language', () => {
   drawCharCount();
+  drawClasses();
   if (state.busy) setBusy(true);
   for (const boxId of Object.keys(state.errors)) drawError(boxId);
   if (state.draft) {
@@ -561,6 +611,17 @@ $('notice-text').addEventListener('input', drawCharCount);
 $('photo-input').addEventListener('change', onPhotoChosen);
 $('photo-remove').addEventListener('click', removePhoto);
 $('create-form').addEventListener('submit', onCreate);
+
+for (const radio of document.querySelectorAll('input[name="audience"]')) radio.addEventListener('change', drawClasses);
+$('add-class').addEventListener('click', addClass);
+$('class-input').addEventListener('keydown', (e) => {
+  // Enter adds the class instead of sending the whole form
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addClass();
+  }
+});
+drawClasses();
 
 $('back-btn').addEventListener('click', () => show('step-input'));
 $('publish-btn').addEventListener('click', onPublish);

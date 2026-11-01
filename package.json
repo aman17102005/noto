@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch dev-server.js",
+    "dev:phone": "HOST=0.0.0.0 node --watch dev-server.js",
     "test": "node --test",
     "try": "node scripts/try-generate.js"
   },

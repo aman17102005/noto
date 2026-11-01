@@ -1,7 +1,12 @@
 {
   "id": "demo-school",
   "school": "Greenfield Public School, Pune",
-  "className": "Class 6",
+  "audience": {
+    "type": "classes",
+    "classes": [
+      "6"
+    ]
+  },
   "students": 45,
   "createdAt": "2026-11-02",
   "original": "GREENFIELD PUBLIC SCHOOL, PUNE\nCircular No. GPS/2026-27/48\nDate: 2 November 2026\n\nSubject: Educational Field Trip to Nehru Science Centre, Mumbai — Class 6\n\nDear Parents,\n\nWe are pleased to inform you that the school has organised an educational field trip for the students of Class 6 to the Nehru Science Centre, Worli, Mumbai on Friday, 11 December 2026. The visit will include the Science Odyssey show, the Energy Gallery and a hands-on workshop.\n\nStudents must report to the school by 6:30 AM. The bus will depart at 6:45 AM sharp and return to the school by approximately 7:30 PM.\n\nThe contribution for the trip is ₹450, which covers travel, entry tickets and breakfast. Kindly send the amount in cash along with the signed consent slip (attached below) to the class teacher on or before Monday, 7 December 2026. Students without a signed consent slip will not be permitted to go on the trip.\n\nStudents should wear the school uniform with ID card, and carry a packed lunch, a water bottle and a cap. Mobile phones and valuables are not allowed.\n\nFor any queries, please contact the class teacher, Mrs. Anjali Deshpande, at the school office between 9:00 AM and 1:00 PM.\n\nMr. Rajesh Kulkarni\nPrincipal",
@@ -20,8 +25,20 @@
         "Questions? Talk to the class teacher, Mrs. Anjali Deshpande, at the school office between 9:00 AM and 1:00 PM."
       ],
       "dates": [
-        { "label": "Last day to send ₹450 and the signed form", "date": "Monday, 7 December 2026", "iso": "2026-12-07", "start": "", "end": "" },
-        { "label": "Trip day — be at school by 6:30 AM", "date": "Friday, 11 December 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+        {
+          "label": "Last day to send ₹450 and the signed form",
+          "date": "Monday, 7 December 2026",
+          "iso": "2026-12-07",
+          "start": "",
+          "end": ""
+        },
+        {
+          "label": "Trip day — be at school by 6:30 AM",
+          "date": "Friday, 11 December 2026",
+          "iso": "2026-12-11",
+          "start": "06:30",
+          "end": "19:30"
+        }
       ]
     },
     "hi": {
@@ -38,8 +55,20 @@
         "कोई सवाल हो तो क्लास टीचर Mrs. Anjali Deshpande से स्कूल ऑफ़िस में सुबह 9:00 से दोपहर 1:00 बजे के बीच मिलें।"
       ],
       "dates": [
-        { "label": "₹450 और साइन किया हुआ फ़ॉर्म भेजने की आखिरी तारीख", "date": "सोमवार, 7 दिसंबर 2026", "iso": "2026-12-07", "start": "", "end": "" },
-        { "label": "यात्रा का दिन — सुबह 6:30 बजे तक स्कूल पहुँचें", "date": "शुक्रवार, 11 दिसंबर 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+        {
+          "label": "₹450 और साइन किया हुआ फ़ॉर्म भेजने की आखिरी तारीख",
+          "date": "सोमवार, 7 दिसंबर 2026",
+          "iso": "2026-12-07",
+          "start": "",
+          "end": ""
+        },
+        {
+          "label": "यात्रा का दिन — सुबह 6:30 बजे तक स्कूल पहुँचें",
+          "date": "शुक्रवार, 11 दिसंबर 2026",
+          "iso": "2026-12-11",
+          "start": "06:30",
+          "end": "19:30"
+        }
       ]
     },
     "es": {
@@ -56,8 +85,20 @@
         "¿Preguntas? Hable con la maestra de la clase, Mrs. Anjali Deshpande, en la oficina de la escuela, de 9:00 a. m. a 1:00 p. m."
       ],
       "dates": [
-        { "label": "Último día para enviar ₹450 y el formulario firmado", "date": "lunes 7 de diciembre de 2026", "iso": "2026-12-07", "start": "", "end": "" },
-        { "label": "Día de la excursión — llegar a la escuela a las 6:30 a. m.", "date": "viernes 11 de diciembre de 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+        {
+          "label": "Último día para enviar ₹450 y el formulario firmado",
+          "date": "lunes 7 de diciembre de 2026",
+          "iso": "2026-12-07",
+          "start": "",
+          "end": ""
+        },
+        {
+          "label": "Día de la excursión — llegar a la escuela a las 6:30 a. m.",
+          "date": "viernes 11 de diciembre de 2026",
+          "iso": "2026-12-11",
+          "start": "06:30",
+          "end": "19:30"
+        }
       ]
     },
     "zh": {
@@ -74,8 +115,20 @@
         "有问题？请在上午9:00到下午1:00之间到学校办公室找班主任 Mrs. Anjali Deshpande。"
       ],
       "dates": [
-        { "label": "交₹450和同意书的最后一天", "date": "2026年12月7日（星期一）", "iso": "2026-12-07", "start": "", "end": "" },
-        { "label": "参观日——早上6:30前到学校", "date": "2026年12月11日（星期五）", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+        {
+          "label": "交₹450和同意书的最后一天",
+          "date": "2026年12月7日（星期一）",
+          "iso": "2026-12-07",
+          "start": "",
+          "end": ""
+        },
+        {
+          "label": "参观日——早上6:30前到学校",
+          "date": "2026年12月11日（星期五）",
+          "iso": "2026-12-11",
+          "start": "06:30",
+          "end": "19:30"
+        }
       ]
     },
     "vi": {
@@ -92,8 +145,20 @@
         "Có câu hỏi? Hãy gặp giáo viên chủ nhiệm Mrs. Anjali Deshpande tại văn phòng trường, từ 9:00 sáng đến 1:00 chiều."
       ],
       "dates": [
-        { "label": "Hạn cuối gửi ₹450 và giấy đồng ý", "date": "Thứ Hai, ngày 7 tháng 12 năm 2026", "iso": "2026-12-07", "start": "", "end": "" },
-        { "label": "Ngày tham quan — có mặt ở trường trước 6:30 sáng", "date": "Thứ Sáu, ngày 11 tháng 12 năm 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+        {
+          "label": "Hạn cuối gửi ₹450 và giấy đồng ý",
+          "date": "Thứ Hai, ngày 7 tháng 12 năm 2026",
+          "iso": "2026-12-07",
+          "start": "",
+          "end": ""
+        },
+        {
+          "label": "Ngày tham quan — có mặt ở trường trước 6:30 sáng",
+          "date": "Thứ Sáu, ngày 11 tháng 12 năm 2026",
+          "iso": "2026-12-11",
+          "start": "06:30",
+          "end": "19:30"
+        }
       ]
     }
   }
