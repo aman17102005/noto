@@ -2,11 +2,13 @@
 // Settings come from environment variables, never from the code.
 
 export function firebaseSettings() {
+  // .trim() forgives a space pasted by accident before or after a value
+  const env = (name) => (process.env[name] || '').trim();
   const settings = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    appId: process.env.FIREBASE_APP_ID,
+    apiKey: env('FIREBASE_API_KEY'),
+    authDomain: env('FIREBASE_AUTH_DOMAIN'),
+    projectId: env('FIREBASE_PROJECT_ID'),
+    appId: env('FIREBASE_APP_ID'),
   };
   return Object.values(settings).every(Boolean) ? settings : null;
 }

@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<!-- Every visible text has a data-i18n attribute naming its text; teacher-i18n.js fills it in the chosen language -->
+<html lang="en" data-title-key="createTitle">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,141 +15,147 @@
   <body>
     <header class="topbar">
       <div class="container topbar-row">
-        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto<span class="pill">Teacher</span></a>
-        <nav class="teacher-nav" id="teacher-nav" aria-label="Teacher menu" hidden>
-          <a href="/teacher" aria-current="page">Create</a>
-          <a href="/dashboard">Dashboard</a>
-          <button class="link-btn" type="button" id="sign-out">Sign out</button>
-        </nav>
+        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto<span class="pill" data-i18n="teacher">Teacher</span></a>
+        <div class="topbar-tools">
+          <label class="ui-lang">
+            <span aria-hidden="true">🌐</span>
+            <span class="visually-hidden" data-i18n="uiLang">Language</span>
+            <select id="ui-lang"></select>
+          </label>
+          <nav class="teacher-nav" id="teacher-nav" hidden>
+            <a href="/teacher" aria-current="page" data-i18n="navCreate">Create</a>
+            <a href="/dashboard" data-i18n="navDashboard">Dashboard</a>
+            <button class="link-btn" type="button" id="sign-out" data-i18n="signOut">Sign out</button>
+          </nav>
+        </div>
       </div>
     </header>
 
     <main class="container">
-      <p class="status" id="auth-loading" role="status">Loading…</p>
+      <p class="status" id="auth-loading" role="status" data-i18n="loading">Loading…</p>
 
       <!-- Shown when the teacher is not signed in -->
       <section id="auth-gate" hidden>
         <div class="card center login-card">
-          <h1>Teacher login</h1>
-          <p class="muted">Sign in with your Google account to create notices and see how many parents opened them. Parents never need to log in.</p>
-          <button class="btn btn-primary btn-big btn-block" type="button" id="sign-in">Sign in with Google</button>
+          <h1 data-i18n="loginTitle">Teacher login</h1>
+          <p class="muted" data-i18n="loginText">Sign in with your Google account to create notices and see how many parents opened them. Parents never need to log in.</p>
+          <button class="btn btn-primary btn-big btn-block" type="button" id="sign-in" data-i18n="signIn">Sign in with Google</button>
+          <p class="hint" id="sign-in-help" data-i18n="signInHelp" hidden>A Google sign-in window should open. Choose your account there.</p>
+          <button class="btn btn-secondary btn-block" type="button" id="same-page-sign-in" data-i18n="samePageSignIn" hidden>Window didn't open? Sign in on this page instead</button>
           <div class="alert" id="auth-error" role="alert" hidden></div>
         </div>
       </section>
 
       <div id="app" hidden>
-      <p class="hint" id="signed-in-as">Signed in as <strong id="teacher-name"></strong></p>
+        <p class="hint"><span data-i18n="signedInAs">Signed in as</span> <strong id="teacher-name"></strong></p>
 
-      <!-- Step 1: paste or photograph the notice -->
-      <section id="step-input">
-        <h1 class="page-title">Create a notice for parents</h1>
-        <p class="muted">
-          Paste the notice or add a photo. Noto writes a short summary, a checklist and the important dates in
-          5 languages.
-        </p>
+        <!-- Step 1: paste or photograph the notice -->
+        <section id="step-input">
+          <h1 class="page-title" data-i18n="createTitle">Create a notice for parents</h1>
+          <p class="muted" data-i18n="createIntro">Paste the notice or add a photo. Noto writes a short summary, a checklist and the important dates in 5 languages.</p>
 
-        <form id="create-form" novalidate>
-          <div class="card">
-            <label class="field">
-              <span class="field-label">Notice text</span>
-              <textarea id="notice-text" rows="9" maxlength="15000" placeholder="Paste the notice here…"></textarea>
-              <span class="hint" id="text-count">0 / 15,000 characters</span>
+          <form id="create-form" novalidate>
+            <div class="card">
+              <label class="field">
+                <span class="field-label" data-i18n="noticeText">Notice text</span>
+                <textarea id="notice-text" rows="9" maxlength="15000" data-i18n-placeholder="noticePlaceholder"></textarea>
+                <span class="hint" id="text-count"></span>
+              </label>
+
+              <div class="or" data-i18n="or">or</div>
+
+              <label class="btn btn-secondary btn-block" for="photo-input" data-i18n="addPhoto">📷 Add a photo of the notice</label>
+              <input class="visually-hidden" type="file" id="photo-input" accept="image/*" />
+              <div class="photo-preview" id="photo-preview" hidden>
+                <img id="photo-img" data-i18n-alt="photoAlt" alt="" />
+                <button class="btn btn-secondary btn-small" type="button" id="photo-remove" data-i18n="removePhoto">Remove photo</button>
+              </div>
+            </div>
+
+            <div class="card two-cols">
+              <label class="field">
+                <span class="field-label" data-i18n="className">Class name</span>
+                <input id="class-name" maxlength="60" data-i18n-placeholder="classPlaceholder" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span class="field-label" data-i18n="students">Number of students</span>
+                <input id="students" type="number" inputmode="numeric" min="1" max="1000" data-i18n-placeholder="studentsPlaceholder" />
+                <span class="hint" data-i18n="studentsHint">For the dashboard: "38 of 45 opened".</span>
+              </label>
+            </div>
+
+            <div class="alert" id="create-error" role="alert" hidden></div>
+
+            <button class="btn btn-primary btn-block btn-big" id="create-btn" type="submit" data-i18n="createBtn">✨ Create in 5 languages</button>
+            <p class="hint center" id="create-status" role="status" hidden></p>
+          </form>
+        </section>
+
+        <!-- Step 2: check and edit what the AI wrote -->
+        <section id="step-edit" hidden>
+          <h1 class="page-title" data-i18n="editTitle">Check and edit</h1>
+          <p class="muted" data-i18n="editIntro">The AI wrote this. Please read each language, fix anything that is wrong, then publish.</p>
+
+          <div class="alert alert-warn" id="warnings" role="alert" hidden></div>
+
+          <nav class="lang-bar" id="edit-langs" data-i18n-aria-label="uiLang"></nav>
+          <div class="card" id="lang-fields"></div>
+
+          <details class="card">
+            <summary><strong data-i18n="originalTitle">Original notice text</strong></summary>
+            <label class="field" style="margin-top: 0.75rem">
+              <span class="hint" data-i18n="originalHint">Parents can open this with "Show original notice". Fix it here if the photo was read wrongly.</span>
+              <textarea id="edit-original" rows="8" lang="en"></textarea>
             </label>
+          </details>
 
-            <div class="or">or</div>
+          <div class="alert" id="publish-error" role="alert" hidden></div>
 
-            <label class="btn btn-secondary btn-block" for="photo-input">📷 Add a photo of the notice</label>
-            <input class="visually-hidden" type="file" id="photo-input" accept="image/*" />
-            <div class="photo-preview" id="photo-preview" hidden>
-              <img id="photo-img" alt="Photo of the notice" />
-              <button class="btn btn-secondary btn-small" type="button" id="photo-remove">Remove photo</button>
+          <div class="actions">
+            <button class="btn btn-secondary" type="button" id="back-btn" data-i18n="back">← Back</button>
+            <button class="btn btn-primary" type="button" id="publish-btn" data-i18n="publish">Publish ✓</button>
+          </div>
+        </section>
+
+        <!-- Step 3: share -->
+        <section id="step-share" hidden>
+          <h1 class="page-title" data-i18n="shareTitle">Ready to share 🎉</h1>
+
+          <div class="card">
+            <h2 data-i18n="linkTitle">Link</h2>
+            <div class="copy-row">
+              <input class="input" id="share-link" readonly data-i18n-aria-label="linkAria" />
+              <button class="btn btn-secondary btn-small" type="button" id="copy-link" data-i18n="copy">Copy</button>
+            </div>
+            <p><a id="open-parent" target="_blank" rel="noopener" data-i18n="openParent">Open the parent page ↗</a></p>
+          </div>
+
+          <div class="card">
+            <h2 data-i18n="qrTitle">QR code</h2>
+            <p class="muted" data-i18n="qrIntro">Print it on the paper notice. Parents scan it with their phone camera — no app needed.</p>
+            <canvas class="qr-canvas" id="qr-canvas" role="img" data-i18n-aria-label="qrAria"></canvas>
+            <button class="btn btn-primary btn-block" type="button" id="download-qr" data-i18n="downloadQr">⬇️ Download QR code</button>
+          </div>
+
+          <div class="card">
+            <h2 data-i18n="waTitle">WhatsApp message</h2>
+            <pre class="wa-text" id="wa-text"></pre>
+            <div class="actions">
+              <button class="btn btn-primary" type="button" id="copy-wa" data-i18n="copyWa">Copy WhatsApp message</button>
+              <a class="btn btn-secondary" id="open-wa" target="_blank" rel="noopener" data-i18n="openWa">Open WhatsApp</a>
             </div>
           </div>
 
-          <div class="card two-cols">
-            <label class="field">
-              <span class="field-label">Class name</span>
-              <input id="class-name" maxlength="60" placeholder="e.g. Class 6B" autocomplete="off" />
-            </label>
-            <label class="field">
-              <span class="field-label">Number of students</span>
-              <input id="students" type="number" inputmode="numeric" min="1" max="1000" placeholder="e.g. 45" />
-              <span class="hint">For the dashboard: "38 of 45 opened".</span>
-            </label>
-          </div>
-
-          <div class="alert" id="create-error" role="alert" hidden></div>
-
-          <button class="btn btn-primary btn-block btn-big" id="create-btn" type="submit">✨ Create in 5 languages</button>
-          <p class="hint center" id="create-status" role="status" hidden></p>
-        </form>
-      </section>
-
-      <!-- Step 2: check and edit what the AI wrote -->
-      <section id="step-edit" hidden>
-        <h1 class="page-title">Check and edit</h1>
-        <p class="muted">The AI wrote this. Please read each language, fix anything that is wrong, then publish.</p>
-
-        <div class="alert alert-warn" id="warnings" role="alert" hidden></div>
-
-        <nav class="lang-bar" id="edit-langs" aria-label="Language to edit"></nav>
-        <div class="card" id="lang-fields"></div>
-
-        <details class="card">
-          <summary><strong>Original notice text</strong></summary>
-          <label class="field" style="margin-top: 0.75rem">
-            <span class="hint">Parents can open this with "Show original notice". Fix it here if the photo was read wrongly.</span>
-            <textarea id="edit-original" rows="8"></textarea>
-          </label>
-        </details>
-
-        <div class="alert" id="publish-error" role="alert" hidden></div>
-
-        <div class="actions">
-          <button class="btn btn-secondary" type="button" id="back-btn">← Back</button>
-          <button class="btn btn-primary" type="button" id="publish-btn">Publish ✓</button>
-        </div>
-      </section>
-
-      <!-- Step 3: share -->
-      <section id="step-share" hidden>
-        <h1 class="page-title">Ready to share 🎉</h1>
-
-        <div class="card">
-          <h2>Link</h2>
-          <div class="copy-row">
-            <input class="input" id="share-link" readonly aria-label="Link to the notice" />
-            <button class="btn btn-secondary btn-small" type="button" id="copy-link">Copy</button>
-          </div>
-          <p><a id="open-parent" target="_blank" rel="noopener">Open the parent page ↗</a></p>
-        </div>
-
-        <div class="card">
-          <h2>QR code</h2>
-          <p class="muted">Print it on the paper notice. Parents scan it with their phone camera — no app needed.</p>
-          <canvas class="qr-canvas" id="qr-canvas" role="img" aria-label="QR code for the notice"></canvas>
-          <button class="btn btn-primary btn-block" type="button" id="download-qr">⬇️ Download QR (PNG)</button>
-        </div>
-
-        <div class="card">
-          <h2>WhatsApp message</h2>
-          <pre class="wa-text" id="wa-text"></pre>
           <div class="actions">
-            <button class="btn btn-primary" type="button" id="copy-wa">Copy WhatsApp message</button>
-            <a class="btn btn-secondary" id="open-wa" target="_blank" rel="noopener">Open WhatsApp</a>
+            <a class="btn btn-secondary" href="/dashboard" data-i18n="seeDashboard">See dashboard</a>
+            <button class="btn btn-secondary" type="button" id="new-btn" data-i18n="newNotice">+ Create another notice</button>
           </div>
-        </div>
-
-        <div class="actions">
-          <a class="btn btn-secondary" href="/dashboard">See dashboard</a>
-          <button class="btn btn-secondary" type="button" id="new-btn">+ Create another notice</button>
-        </div>
-      </section>
+        </section>
       </div>
     </main>
 
     <footer class="footer">
-      <p>Translations are made by AI. Please check them before you share.</p>
+      <p data-i18n="footer">Translations are made by AI. Please check them before you share.</p>
     </footer>
   </body>
 </html>

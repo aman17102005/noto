@@ -47,6 +47,7 @@ If the status is "ok":
 
 Rules for every language:
 - Use very simple words and short sentences, for a reader aged about 10 or a beginner in that language. Talk to the parent as "you". Be warm and polite, like a kind teacher, not a word-for-word translation.
+- In hi, es, zh and vi, do not leave any English words in the text, except the names you must keep (people, schools, colleges, places, rooms, buildings, forms, websites, phone numbers). Translate everyday words and abbreviations too — for example "PTM", "Term 2", "entry slip", "ERP portal", "RSVP", "fees" — or explain them in simple words in that language.
 - Replace school jargon and abbreviations with everyday words (say "parent-teacher meeting", not "PTM"; "fees you still have to pay", not "pending dues"). In Hindi, Chinese and Vietnamese, use everyday words people really say, not formal or literary words.
 - Keep numbers, times, money amounts (with their currency symbol), phone numbers, and names of people, schools, places, rooms and forms EXACTLY as in the original. Write those names in their original Latin letters; do not translate or transliterate them.
 - Dates: keep the day, month and year exactly the same, but write the weekday and month in the target language (Spanish "sábado 21 de noviembre de 2026", Hindi "शनिवार, 21 नवंबर 2026", Chinese "2026年11月21日（星期六）", Vietnamese "thứ Bảy, ngày 21 tháng 11 năm 2026"). Never leave English month or weekday names in other languages.
@@ -91,7 +92,7 @@ async function callModel(model, input) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-goog-api-key': process.env.GEMINI_API_KEY,
+        'x-goog-api-key': (process.env.GEMINI_API_KEY || '').trim(),
       },
       body: JSON.stringify(buildRequest(input, model)),
       signal: controller.signal,

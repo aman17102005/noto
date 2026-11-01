@@ -123,7 +123,7 @@ function findChangedAmounts(original, languages) {
     const text = [lang.title, lang.summary, ...lang.checklist, ...lang.dates.map((d) => d.label)].join('\n');
     for (const amount of moneyAmounts(text)) {
       if (!allowed.has(amount)) {
-        warnings.push({ lang: code, message: `An amount of money (${amount}) is not in the original notice. Please check it.` });
+        warnings.push({ lang: code, amount, message: `An amount of money (${amount}) is not in the original notice. Please check it.` });
       }
     }
   }

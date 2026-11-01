@@ -5,6 +5,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {
   getAuth,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
@@ -23,6 +24,7 @@ import {
   setDoc,
   where,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-lite.js';
+import { setupLanguagePicker, t } from './teacher-i18n.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -42,10 +44,16 @@ function startFirebase() {
 
 // ---------- Login ----------
 
-export async function signInWithGoogle() {
+// Normally a small Google window (pop-up) opens. With { samePage: true } the whole tab goes to
+// Google's sign-in page and comes back — for browsers and in-app browsers that block pop-ups.
+export async function signInWithGoogle({ samePage = false } = {}) {
   const { auth } = await startFirebase();
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
+  if (samePage) {
+    await signInWithRedirect(auth, provider);
+    return;
+  }
   try {
     await signInWithPopup(auth, provider);
   } catch (err) {
@@ -58,17 +66,18 @@ export async function signInWithGoogle() {
   }
 }
 
-function signInErrorMessage(err) {
+// Which message (from teacher-i18n.js) to show for a sign-in problem. "" = show nothing.
+function signInErrorKey(err) {
   switch (err.code) {
     case 'auth/popup-closed-by-user':
     case 'auth/cancelled-popup-request':
       return '';
     case 'auth/unauthorized-domain':
-      return 'This website address is not allowed to sign in yet. (Firebase console → Authentication → Settings → Authorized domains.)';
+      return 'errUnauthorizedDomain';
     case 'auth/network-request-failed':
-      return 'No internet connection. Please try again.';
+      return 'errNetwork';
     default:
-      return 'Could not sign in. Please try again.';
+      return 'errSignIn';
   }
 }
 
@@ -126,18 +135,47 @@ export async function deleteNotice(id) {
 
 export function setupTeacherPage({ onSignedIn }) {
   let started = false;
+  let helpTimer;
+  let errorKey = '';
+  let loadFailed = false;
+
+  setupLanguagePicker();
+
+  const drawMessages = () => {
+    $('auth-error').textContent = errorKey ? t(errorKey) : '';
+    $('auth-error').hidden = !errorKey;
+    if (loadFailed) $('auth-loading').textContent = t('loginUnavailable');
+  };
+  document.addEventListener('noto:language', drawMessages);
+
+  const showSignInError = (err) => {
+    console.error(err);
+    errorKey = signInErrorKey(err);
+    drawMessages();
+  };
 
   $('sign-in').addEventListener('click', async () => {
-    $('auth-error').hidden = true;
+    errorKey = '';
+    drawMessages();
+    $('sign-in-help').hidden = false;
+    $('same-page-sign-in').hidden = true;
+    // Some browsers block the pop-up without telling us. After a few seconds, offer the other way.
+    clearTimeout(helpTimer);
+    helpTimer = setTimeout(() => ($('same-page-sign-in').hidden = false), 4000);
     try {
       await signInWithGoogle();
     } catch (err) {
-      console.error(err);
-      const message = signInErrorMessage(err);
-      $('auth-error').textContent = message;
-      $('auth-error').hidden = !message;
+      showSignInError(err);
+      $('same-page-sign-in').hidden = false;
     }
   });
+
+  $('same-page-sign-in').addEventListener('click', () => signInWithGoogle({ samePage: true }).catch(showSignInError));
+
+  // Coming back from Google's sign-in page: show an error if it failed (success is handled below)
+  startFirebase()
+    .then(({ auth }) => getRedirectResult(auth))
+    .catch(showSignInError);
 
   $('sign-out').addEventListener('click', async () => {
     const { auth } = await startFirebase();
@@ -162,7 +200,8 @@ export function setupTeacherPage({ onSignedIn }) {
       })
     )
     .catch((err) => {
-      console.error(err);
-      $('auth-loading').textContent = `Teacher login is not available: ${err.message}`;
+      console.error(err); // the technical reason is in the browser console
+      loadFailed = true;
+      drawMessages();
     });
 }

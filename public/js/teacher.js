@@ -3,17 +3,13 @@
 // Step 2: the teacher checks and edits every language
 // Step 3: publish → link, QR code, WhatsApp message
 // Teachers must be signed in (Google login, handled by auth.js).
+// The whole page speaks the language the teacher picks (teacher-i18n.js). Picking a language
+// button in the editor also switches the page, so every line is in that one language.
 
 import { setupTeacherPage, loginToken, saveNotice } from './auth.js';
+import { LANGS, langInfo, langName, setUiLang, t, uiLang, hasText } from './teacher-i18n.js';
 
-const LANGS = [
-  { code: 'en', name: 'English', htmlLang: 'en' },
-  { code: 'hi', name: 'हिन्दी', htmlLang: 'hi' },
-  { code: 'es', name: 'Español', htmlLang: 'es' },
-  { code: 'zh', name: '中文', htmlLang: 'zh-CN' },
-  { code: 'vi', name: 'Tiếng Việt', htmlLang: 'vi' },
-];
-const LANG_NAMES = LANGS.map((l) => l.name).join(' · ');
+const LANG_LIST = LANGS.map((l) => l.name).join(' · '); // each name in its own language, so parents find theirs
 const MAX_PHOTO_SIDE = 1600; // pixels — enough to read text, small enough to upload fast
 
 const $ = (id) => document.getElementById(id);
@@ -21,8 +17,10 @@ const $ = (id) => document.getElementById(id);
 const state = {
   image: null, // { mimeType, data } — the shrunk photo, ready to send
   draft: null, // the notice being edited
-  editLang: 'en',
+  warnings: [],
+  busy: false,
   published: null,
+  errors: {}, // the message shown in each error box, kept so it can be re-shown in a new language
 };
 
 // ---------- Small helpers ----------
@@ -32,11 +30,19 @@ function show(stepId) {
   window.scrollTo({ top: 0 });
 }
 
-function showError(boxId, message) {
+// Shows a message from teacher-i18n.js in an error box. "raw" is the server's own English
+// message, which has extra detail — used only when the page is in English.
+function showError(boxId, key, { vars = {}, raw = '' } = {}) {
+  state.errors[boxId] = key ? { key, vars, raw } : null;
+  drawError(boxId);
+  if (key) $(boxId).scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function drawError(boxId) {
+  const error = state.errors[boxId];
   const box = $(boxId);
-  box.textContent = message;
-  box.hidden = !message;
-  if (message) box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  box.hidden = !error;
+  box.textContent = !error ? '' : uiLang() === 'en' && error.raw ? error.raw : t(error.key, error.vars);
 }
 
 function el(tag, props = {}, children = []) {
@@ -79,9 +85,8 @@ async function copyText(text, button) {
     document.execCommand('copy');
     area.remove();
   }
-  const before = button.textContent;
-  button.textContent = 'Copied ✓';
-  setTimeout(() => (button.textContent = before), 2000);
+  button.textContent = t('copied');
+  setTimeout(() => (button.textContent = t(button.dataset.i18n)), 2000);
 }
 
 // Random, hard-to-guess notice ID like "k7m2xq9p" (no 0/o or 1/l, so it is easy to read)
@@ -140,7 +145,7 @@ async function onPhotoChosen() {
   } catch {
     state.image = null;
     $('photo-preview').hidden = true;
-    showError('create-error', 'Could not open that photo. Please use a JPG or PNG photo.');
+    showError('create-error', 'errPhoto');
   }
   $('photo-input').value = ''; // lets the teacher pick the same file again
 }
@@ -151,14 +156,25 @@ function removePhoto() {
   $('photo-img').removeAttribute('src');
 }
 
+function drawCharCount() {
+  const n = $('notice-text').value.length.toLocaleString(langInfo().locale);
+  $('text-count').textContent = t('charCount', { n });
+}
+
 function setBusy(busy) {
+  state.busy = busy;
   const btn = $('create-btn');
   btn.disabled = busy;
-  btn.replaceChildren(
-    ...(busy ? [el('span', { className: 'spinner' }), ' Writing 5 languages…'] : ['✨ Create in 5 languages'])
-  );
+  btn.replaceChildren(...(busy ? [el('span', { className: 'spinner' }), ' ' + t('creatingBtn')] : [t('createBtn')]));
   $('create-status').hidden = !busy;
-  $('create-status').textContent = busy ? 'Reading the notice. This usually takes 5–15 seconds.' : '';
+  $('create-status').textContent = busy ? t('creatingStatus') : '';
+}
+
+// Turns the server's error code into a message in the teacher's language
+function apiErrorKey(code) {
+  const sameAs = { empty: 'errNoInput', bad_image: 'errPhoto', timeout: 'errTimeout', bad_format: 'api_ai_error', network: 'api_ai_error' };
+  if (sameAs[code]) return sameAs[code];
+  return hasText(`api_${code}`) ? `api_${code}` : 'errGeneric';
 }
 
 async function onCreate(event) {
@@ -169,11 +185,9 @@ async function onCreate(event) {
   const className = $('class-name').value.trim();
   const students = Number($('students').value);
 
-  if (!text && !state.image) return showError('create-error', 'Please paste the notice text or add a photo of it.');
-  if (!className) return showError('create-error', 'Please enter the class name (for example "Class 6B").');
-  if (!Number.isInteger(students) || students < 1 || students > 1000) {
-    return showError('create-error', 'Please enter the number of students (1 to 1000).');
-  }
+  if (!text && !state.image) return showError('create-error', 'errNoInput');
+  if (!className) return showError('create-error', 'errClass');
+  if (!Number.isInteger(students) || students < 1 || students > 1000) return showError('create-error', 'errStudents');
 
   setBusy(true);
   const controller = new AbortController();
@@ -190,23 +204,18 @@ async function onCreate(event) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.notice) {
-      showError('create-error', data.error || 'Something went wrong. Please try again.');
+      showError('create-error', apiErrorKey(data.code), { raw: data.error });
       return;
     }
 
     const { warnings, ...notice } = data.notice;
     state.draft = { ...notice, className, students };
-    state.editLang = 'en';
-    renderWarnings(warnings || []);
+    state.warnings = warnings || [];
+    renderWarnings();
     renderEditor();
     show('step-edit');
   } catch (err) {
-    showError(
-      'create-error',
-      err.name === 'AbortError'
-        ? 'The AI took too long. Please try again.'
-        : 'Could not reach Noto. Please check your internet and try again.'
-    );
+    showError('create-error', err.name === 'AbortError' ? 'errTimeout' : 'errOffline');
   } finally {
     clearTimeout(timer);
     setBusy(false);
@@ -215,14 +224,17 @@ async function onCreate(event) {
 
 // ---------- Step 2: check and edit ----------
 
-function renderWarnings(warnings) {
+function renderWarnings() {
   const box = $('warnings');
-  box.hidden = warnings.length === 0;
-  if (!warnings.length) return;
-  const names = Object.fromEntries(LANGS.map((l) => [l.code, l.name]));
+  box.hidden = state.warnings.length === 0;
+  if (!state.warnings.length) return;
   box.replaceChildren(
-    el('strong', { textContent: 'Please double-check:' }),
-    el('ul', {}, warnings.map((w) => el('li', { textContent: `${names[w.lang] || w.lang}: ${w.message}` })))
+    el('strong', { textContent: t('doubleCheck') }),
+    el(
+      'ul',
+      {},
+      state.warnings.map((w) => el('li', { textContent: `${langName(w.lang)}: ${t('warnMoney', { amount: w.amount })}` }))
+    )
   );
 }
 
@@ -231,11 +243,9 @@ function renderEditor() {
   nav.replaceChildren(
     ...LANGS.map((l) => {
       const btn = el('button', { type: 'button', className: 'lang-btn', lang: l.htmlLang, textContent: l.name });
-      btn.setAttribute('aria-pressed', String(l.code === state.editLang));
-      btn.addEventListener('click', () => {
-        state.editLang = l.code;
-        renderEditor();
-      });
+      btn.setAttribute('aria-pressed', String(l.code === uiLang()));
+      // Picking a language here switches the whole page to that language
+      btn.addEventListener('click', () => setUiLang(l.code));
       return btn;
     })
   );
@@ -244,14 +254,14 @@ function renderEditor() {
 }
 
 function renderLanguageFields() {
-  const { code, htmlLang, name } = LANGS.find((l) => l.code === state.editLang);
+  const { code, htmlLang } = langInfo();
   const content = state.draft.languages[code];
   const opts = { lang: htmlLang };
 
   // Title + summary
   const top = el('div', { className: 'edit-group' }, [
-    textField(`Title (${name})`, content, 'title', { ...opts, multiline: true, maxLength: 150 }),
-    textField('Short summary', content, 'summary', { ...opts, multiline: true, rows: 4, maxLength: 800 }),
+    textField(t('fieldTitle'), content, 'title', { ...opts, multiline: true, maxLength: 150 }),
+    textField(t('fieldSummary'), content, 'summary', { ...opts, multiline: true, rows: 4, maxLength: 800 }),
   ]);
 
   // Checklist
@@ -260,10 +270,10 @@ function renderLanguageFields() {
     items.replaceChildren(
       ...content.checklist.map((text, i) => {
         const area = autoGrow(el('textarea', { value: text, rows: 1, maxLength: 400, lang: htmlLang }));
-        area.setAttribute('aria-label', `Checklist item ${i + 1}`);
+        area.setAttribute('aria-label', t('itemLabel', { n: i + 1 }));
         area.addEventListener('input', () => (content.checklist[i] = area.value));
         const remove = el('button', { type: 'button', className: 'btn-icon', textContent: '✕' });
-        remove.setAttribute('aria-label', `Remove item ${i + 1}`);
+        remove.setAttribute('aria-label', t('removeItem', { n: i + 1 }));
         remove.addEventListener('click', () => {
           content.checklist.splice(i, 1);
           drawItems();
@@ -273,33 +283,33 @@ function renderLanguageFields() {
     );
   };
   drawItems();
-  const addItem = el('button', { type: 'button', className: 'btn btn-secondary btn-small', textContent: '+ Add item' });
+  const addItem = el('button', { type: 'button', className: 'btn btn-secondary btn-small', textContent: t('addItem') });
   addItem.addEventListener('click', () => {
     content.checklist.push('');
     drawItems();
     items.lastElementChild?.querySelector('textarea').focus();
   });
   const checklist = el('div', { className: 'edit-group' }, [
-    el('span', { className: 'field-label', textContent: 'Checklist — what parents must do' }),
+    el('span', { className: 'field-label', textContent: t('fieldChecklist') }),
     items,
     addItem,
   ]);
 
   // Dates. The calendar date and times are shared by all languages, so changing them here changes them everywhere.
-  const dates = el('div', { className: 'edit-group' }, [el('span', { className: 'field-label', textContent: 'Important dates' })]);
-  if (!content.dates.length) dates.append(el('p', { className: 'hint', textContent: 'No dates found in this notice.' }));
+  const dates = el('div', { className: 'edit-group' }, [el('span', { className: 'field-label', textContent: t('fieldDates') })]);
+  if (!content.dates.length) dates.append(el('p', { className: 'hint', textContent: t('noDates') }));
   content.dates.forEach((d, i) => {
     const shared = (key, value) => {
       for (const l of LANGS) state.draft.languages[l.code].dates[i][key] = value;
     };
-    const dateInput = el('input', { type: 'date', value: d.iso });
+    const dateInput = el('input', { type: 'date', value: d.iso, lang: htmlLang });
     dateInput.addEventListener('input', () => shared('iso', dateInput.value));
-    const startInput = el('input', { type: 'time', value: d.start });
+    const startInput = el('input', { type: 'time', value: d.start, lang: htmlLang });
     startInput.addEventListener('input', () => shared('start', startInput.value));
-    const endInput = el('input', { type: 'time', value: d.end });
+    const endInput = el('input', { type: 'time', value: d.end, lang: htmlLang });
     endInput.addEventListener('input', () => shared('end', endInput.value));
 
-    const remove = el('button', { type: 'button', className: 'btn btn-secondary btn-small', textContent: 'Remove this date (all languages)' });
+    const remove = el('button', { type: 'button', className: 'btn btn-secondary btn-small', textContent: t('removeDate') });
     remove.addEventListener('click', () => {
       for (const l of LANGS) state.draft.languages[l.code].dates.splice(i, 1);
       renderLanguageFields();
@@ -307,12 +317,12 @@ function renderLanguageFields() {
 
     dates.append(
       el('div', { className: 'card' }, [
-        textField('What happens', d, 'label', { ...opts, multiline: true, rows: 1 }),
-        textField('Date as parents read it', d, 'date', opts),
+        textField(t('dateWhat'), d, 'label', { ...opts, multiline: true, rows: 1 }),
+        textField(t('dateText'), d, 'date', opts),
         el('div', { className: 'calendar-row' }, [
-          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: 'Calendar date (all languages)' }), dateInput]),
-          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: 'Start time' }), startInput]),
-          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: 'End time' }), endInput]),
+          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: t('dateCalendar') }), dateInput]),
+          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: t('startTime') }), startInput]),
+          el('label', { className: 'field' }, [el('span', { className: 'hint', textContent: t('endTime') }), endInput]),
         ]),
         remove,
       ])
@@ -322,40 +332,40 @@ function renderLanguageFields() {
   $('lang-fields').replaceChildren(top, checklist, dates);
 }
 
-// Checks every language is complete and tidies the text. Returns an error message, or "".
+// Checks every language is complete and tidies the text.
+// Returns null when fine, or { key, code } for the first problem found.
 function tidyDraft() {
   const draft = state.draft;
   draft.original = $('edit-original').value.trim();
-  if (!draft.original) return 'The original notice text is empty.';
+  if (!draft.original) return { key: 'errOriginalEmpty' };
 
-  for (const { code, name } of LANGS) {
+  for (const { code } of LANGS) {
     const c = draft.languages[code];
     c.title = c.title.trim();
     c.summary = c.summary.trim();
-    c.checklist = c.checklist.map((t) => t.trim()).filter(Boolean);
+    c.checklist = c.checklist.map((item) => item.trim()).filter(Boolean);
     for (const d of c.dates) {
       d.label = d.label.trim();
       d.date = d.date.trim();
     }
-    const problem =
-      (!c.title && 'the title is empty') ||
-      (!c.summary && 'the summary is empty') ||
-      (!c.checklist.length && 'the checklist is empty') ||
-      (c.dates.some((d) => !d.label || !d.date) && 'a date is missing its text');
-    if (problem) {
-      state.editLang = code;
-      return `${name}: ${problem}.`;
-    }
+    const key =
+      (!c.title && 'errEmptyTitle') ||
+      (!c.summary && 'errEmptySummary') ||
+      (!c.checklist.length && 'errEmptyChecklist') ||
+      (c.dates.some((d) => !d.label || !d.date) && 'errDateText');
+    if (key) return { key, code };
   }
-  return '';
+  return null;
 }
 
 async function onPublish() {
   showError('publish-error', '');
   const problem = tidyDraft();
   if (problem) {
+    // Jump to the language that needs fixing (the whole page switches to it)
+    if (problem.code) setUiLang(problem.code);
     renderEditor();
-    showError('publish-error', problem);
+    showError('publish-error', problem.key, { vars: { lang: problem.code ? langName(problem.code) : '' } });
     return;
   }
 
@@ -380,19 +390,22 @@ async function onPublish() {
       /* ignore */
     }
     state.published = notice;
-    renderShare(notice);
+    renderShare();
     show('step-share');
   } catch (err) {
     console.error(err);
-    showError('publish-error', 'Could not publish the notice. Please try again.');
+    showError('publish-error', 'errPublish');
   } finally {
     btn.disabled = false;
   }
 }
 
 // ---------- Step 3: share ----------
+// The QR card and the WhatsApp message use the chosen language too.
+// Switch the language and download again to get a card for a different group of parents.
 
-function renderShare(notice) {
+function renderShare() {
+  const notice = state.published;
   const link = `${location.origin}/n/${notice.id}`;
   $('share-link').value = link;
   $('open-parent').href = link;
@@ -401,38 +414,41 @@ function renderShare(notice) {
 
   const message = whatsappMessage(notice, link);
   $('wa-text').textContent = message;
+  $('wa-text').lang = langInfo().htmlLang;
   $('open-wa').href = `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
 function whatsappMessage(notice, link) {
-  const en = notice.languages.en;
+  const content = notice.languages[uiLang()];
   const from = [notice.className, notice.school].filter(Boolean).join(' — ');
   return [
-    `📢 *${en.title}*`,
+    `📢 *${content.title}*`,
     from,
     '',
-    en.summary,
+    content.summary,
     '',
-    'Read this notice in simple words, in your language, or listen to it:',
-    LANG_NAMES,
+    t('waRead'),
+    LANG_LIST,
     `👉 ${link}`,
     '',
-    '_Translated by AI. If unsure, please check with the school._',
+    `_${t('waDisclaimer')}_`,
   ]
     .filter((line, i, all) => !(line === '' && all[i - 1] === ''))
     .join('\n');
 }
 
-// Splits text into lines that fit a width on the canvas
+// Splits text into lines that fit a width on the canvas.
+// Chinese has no spaces between words, so it is split letter by letter.
 function wrapText(ctx, text, maxWidth) {
-  const words = text.split(' ');
+  const parts = /\s/.test(text) ? text.split(' ') : Array.from(text);
+  const joiner = /\s/.test(text) ? ' ' : '';
   const lines = [];
   let line = '';
-  for (const word of words) {
-    const test = line ? `${line} ${word}` : word;
+  for (const part of parts) {
+    const test = line ? line + joiner + part : part;
     if (ctx.measureText(test).width > maxWidth && line) {
       lines.push(line);
-      line = word;
+      line = part;
     } else {
       line = test;
     }
@@ -455,12 +471,14 @@ function drawQrCard(canvas, link, notice) {
   const cell = Math.floor(720 / (modules + quiet * 2));
   const qrSize = cell * (modules + quiet * 2);
 
-  // Measure the title first so we know how tall the card must be
+  // Measure the heading and title first so we know how tall the card must be
   const ctx = canvas.getContext('2d');
+  ctx.font = `800 46px ${font}`;
+  const headingLines = wrapText(ctx, t('qrHeading'), W - pad * 2);
   ctx.font = `700 36px ${font}`;
-  const titleLines = wrapText(ctx, notice.languages.en.title, W - pad * 2);
+  const titleLines = wrapText(ctx, notice.languages[uiLang()].title, W - pad * 2);
 
-  const H = pad + 56 + 20 + qrSize + 30 + 40 + 30 + titleLines.length * 46 + 40 + 30 + pad;
+  const H = pad + headingLines.length * 58 + 20 + qrSize + 30 + 40 + 30 + titleLines.length * 46 + 40 + 30 + pad;
   canvas.width = W;
   canvas.height = H;
 
@@ -472,8 +490,11 @@ function drawQrCard(canvas, link, notice) {
 
   let y = pad;
   ctx.font = `800 46px ${font}`;
-  ctx.fillText('📱 Scan to read in your language', W / 2, y);
-  y += 56 + 20;
+  for (const line of headingLines) {
+    ctx.fillText(line, W / 2, y);
+    y += 58;
+  }
+  y += 20;
 
   const x0 = Math.round((W - qrSize) / 2);
   for (let r = 0; r < modules; r++) {
@@ -484,7 +505,7 @@ function drawQrCard(canvas, link, notice) {
   y += qrSize + 30;
 
   ctx.font = `600 34px ${font}`;
-  ctx.fillText(LANG_NAMES, W / 2, y);
+  ctx.fillText(LANG_LIST, W / 2, y);
   y += 40 + 30;
 
   ctx.font = `700 36px ${font}`;
@@ -500,7 +521,7 @@ function drawQrCard(canvas, link, notice) {
 
 function downloadQr() {
   $('qr-canvas').toBlob((blob) => {
-    const link = el('a', { href: URL.createObjectURL(blob), download: `noto-qr-${state.published.id}.png` });
+    const link = el('a', { href: URL.createObjectURL(blob), download: `noto-qr-${state.published.id}-${uiLang()}.png` });
     document.body.append(link);
     link.click();
     link.remove();
@@ -510,31 +531,41 @@ function downloadQr() {
 
 function startAgain() {
   $('create-form').reset();
-  $('text-count').textContent = '0 / 15,000 characters';
+  drawCharCount();
   removePhoto();
   state.draft = null;
   state.published = null;
+  state.warnings = [];
   show('step-input');
 }
 
+// ---------- When the language changes, redraw everything that is not plain page text ----------
+
+document.addEventListener('noto:language', () => {
+  drawCharCount();
+  if (state.busy) setBusy(true);
+  for (const boxId of Object.keys(state.errors)) drawError(boxId);
+  if (state.draft) {
+    renderWarnings();
+    renderEditor();
+  }
+  if (state.published) renderShare();
+});
+
 // ---------- Start ----------
 
-// Module scripts run after the page has loaded, so we can set up straight away
 setupTeacherPage({ onSignedIn: () => {} });
+drawCharCount();
 
-document.addEventListener('DOMContentLoaded', () => {
-  $('notice-text').addEventListener('input', (e) => {
-    $('text-count').textContent = `${e.target.value.length.toLocaleString('en')} / 15,000 characters`;
-  });
-  $('photo-input').addEventListener('change', onPhotoChosen);
-  $('photo-remove').addEventListener('click', removePhoto);
-  $('create-form').addEventListener('submit', onCreate);
+$('notice-text').addEventListener('input', drawCharCount);
+$('photo-input').addEventListener('change', onPhotoChosen);
+$('photo-remove').addEventListener('click', removePhoto);
+$('create-form').addEventListener('submit', onCreate);
 
-  $('back-btn').addEventListener('click', () => show('step-input'));
-  $('publish-btn').addEventListener('click', onPublish);
+$('back-btn').addEventListener('click', () => show('step-input'));
+$('publish-btn').addEventListener('click', onPublish);
 
-  $('copy-link').addEventListener('click', (e) => copyText($('share-link').value, e.currentTarget));
-  $('copy-wa').addEventListener('click', (e) => copyText($('wa-text').textContent, e.currentTarget));
-  $('download-qr').addEventListener('click', downloadQr);
-  $('new-btn').addEventListener('click', startAgain);
-});
+$('copy-link').addEventListener('click', (e) => copyText($('share-link').value, e.currentTarget));
+$('copy-wa').addEventListener('click', (e) => copyText($('wa-text').textContent, e.currentTarget));
+$('download-qr').addEventListener('click', downloadQr);
+$('new-btn').addEventListener('click', startAgain);
