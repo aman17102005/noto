@@ -1,0 +1,100 @@
+{
+  "id": "demo-college",
+  "school": "Lakeview Community College",
+  "className": "First-year students",
+  "students": 120,
+  "createdAt": "2026-11-02",
+  "original": "LAKEVIEW COMMUNITY COLLEGE\nOffice of Financial Aid\n\nFinancial Aid Night for Students and Families — FAFSA / CADAA 2027–28\n\nDear Students and Families,\n\nPaying for college can feel overwhelming, but help is available. Lakeview Community College invites all first-year students and their parents or guardians to Financial Aid Night on Thursday, December 3, 2026, from 6:00 PM to 7:30 PM in Room B-104 of the Student Center.\n\nOur financial aid advisors will walk you step by step through the 2027–28 FAFSA and the California Dream Act Application (CADAA), explain the Cal Grant and the California College Promise Grant, and help you create your StudentAid.gov account (FSA ID) on the spot.\n\nPlease bring: your 2025 federal tax return (or W-2 forms), your Social Security number if you have one, and a valid email address for both the student and one parent. Free childcare and pizza will be provided. Interpreters for Spanish, Vietnamese and Mandarin will be available.\n\nThe California priority deadline for the Cal Grant is Tuesday, March 2, 2027. Students who miss this date may lose thousands of dollars in free grant money.\n\nSeating is limited to 120 people. Please RSVP by Monday, November 30, 2026, at the Financial Aid Office front desk (Building A, Room 112) or by calling (555) 014-2290.\n\nMs. Linh Tran\nDirector of Financial Aid",
+  "languages": {
+    "en": {
+      "title": "Free help night to pay for college",
+      "summary": "Come to Financial Aid Night on Thursday, December 3, 2026, from 6:00 PM to 7:30 PM at Lakeview Community College. Advisors will help you fill out the FAFSA or CADAA form to get money for college. Please sign up by Monday, November 30, 2026.",
+      "checklist": [
+        "Sign up by Monday, November 30, 2026. Call (555) 014-2290 or visit Building A, Room 112.",
+        "Come to Room B-104, Student Center, on Thursday, December 3, 2026 at 6:00 PM.",
+        "Bring your 2025 tax return (or W-2 forms).",
+        "Bring your Social Security number if you have one.",
+        "Bring an email address for the student and for one parent.",
+        "Free childcare and pizza. Spanish, Vietnamese and Mandarin interpreters will be there.",
+        "Send the Cal Grant application by Tuesday, March 2, 2027, or you may lose free money."
+      ],
+      "dates": [
+        { "label": "Last day to sign up", "date": "Monday, November 30, 2026", "iso": "2026-11-30", "start": "", "end": "" },
+        { "label": "Financial Aid Night, 6:00 PM – 7:30 PM", "date": "Thursday, December 3, 2026", "iso": "2026-12-03", "start": "18:00", "end": "19:30" },
+        { "label": "Cal Grant priority deadline", "date": "Tuesday, March 2, 2027", "iso": "2027-03-02", "start": "", "end": "" }
+      ]
+    },
+    "hi": {
+      "title": "कॉलेज की फ़ीस के लिए मुफ़्त मदद की शाम",
+      "summary": "गुरुवार, 3 दिसंबर 2026 को शाम 6:00 से 7:30 बजे तक Lakeview Community College में Financial Aid Night है। सलाहकार आपको कॉलेज के लिए पैसे पाने का FAFSA या CADAA फ़ॉर्म भरने में मदद करेंगे। कृपया सोमवार, 30 नवंबर 2026 तक नाम लिखवाएँ।",
+      "checklist": [
+        "सोमवार, 30 नवंबर 2026 तक नाम लिखवाएँ। (555) 014-2290 पर फ़ोन करें या Building A, Room 112 में जाएँ।",
+        "गुरुवार, 3 दिसंबर 2026 को शाम 6:00 बजे Room B-104, Student Center आएँ।",
+        "अपना 2025 का टैक्स रिटर्न (या W-2 फ़ॉर्म) साथ लाएँ।",
+        "अगर आपके पास Social Security नंबर है, तो वह साथ लाएँ।",
+        "छात्र और एक माता-पिता का ईमेल पता साथ लाएँ।",
+        "बच्चों की देखभाल और पिज़्ज़ा मुफ़्त है। Spanish, Vietnamese और Mandarin के दुभाषिए मौजूद रहेंगे।",
+        "Cal Grant का फ़ॉर्म मंगलवार, 2 मार्च 2027 तक भरें, नहीं तो मुफ़्त पैसे मिलने का मौका जा सकता है।"
+      ],
+      "dates": [
+        { "label": "नाम लिखवाने की आखिरी तारीख", "date": "सोमवार, 30 नवंबर 2026", "iso": "2026-11-30", "start": "", "end": "" },
+        { "label": "Financial Aid Night, शाम 6:00 – 7:30 बजे", "date": "गुरुवार, 3 दिसंबर 2026", "iso": "2026-12-03", "start": "18:00", "end": "19:30" },
+        { "label": "Cal Grant की प्राथमिक आखिरी तारीख", "date": "मंगलवार, 2 मार्च 2027", "iso": "2027-03-02", "start": "", "end": "" }
+      ]
+    },
+    "es": {
+      "title": "Noche gratis de ayuda para pagar la universidad",
+      "summary": "Venga a Financial Aid Night el jueves 3 de diciembre de 2026, de 6:00 p. m. a 7:30 p. m., en Lakeview Community College. Los consejeros le ayudarán a llenar el formulario FAFSA o CADAA para recibir dinero para la universidad. Inscríbase antes del lunes 30 de noviembre de 2026.",
+      "checklist": [
+        "Inscríbase antes del lunes 30 de noviembre de 2026. Llame al (555) 014-2290 o vaya a Building A, Room 112.",
+        "Venga al Room B-104, Student Center, el jueves 3 de diciembre de 2026 a las 6:00 p. m.",
+        "Traiga su declaración de impuestos de 2025 (o los formularios W-2).",
+        "Traiga su número de Seguro Social (Social Security), si tiene uno.",
+        "Traiga un correo electrónico del estudiante y de uno de los padres.",
+        "Cuidado de niños y pizza gratis. Habrá intérpretes de español, vietnamita y mandarín.",
+        "Envíe la solicitud de Cal Grant antes del martes 2 de marzo de 2027, o puede perder dinero gratis."
+      ],
+      "dates": [
+        { "label": "Último día para inscribirse", "date": "lunes 30 de noviembre de 2026", "iso": "2026-11-30", "start": "", "end": "" },
+        { "label": "Financial Aid Night, 6:00 p. m. – 7:30 p. m.", "date": "jueves 3 de diciembre de 2026", "iso": "2026-12-03", "start": "18:00", "end": "19:30" },
+        { "label": "Fecha límite prioritaria de Cal Grant", "date": "martes 2 de marzo de 2027", "iso": "2027-03-02", "start": "", "end": "" }
+      ]
+    },
+    "zh": {
+      "title": "免费帮助家庭申请大学助学金",
+      "summary": "2026年12月3日（星期四）晚上6:00到7:30，Lakeview Community College 举办 Financial Aid Night。顾问会帮您填写 FAFSA 或 CADAA 表格，申请上大学的钱。请在2026年11月30日（星期一）之前报名。",
+      "checklist": [
+        "在2026年11月30日（星期一）之前报名。打电话 (555) 014-2290，或去 Building A, Room 112。",
+        "2026年12月3日（星期四）晚上6:00到 Student Center 的 Room B-104。",
+        "带上您2025年的报税表（或 W-2 表）。",
+        "如果有社会安全号码（Social Security number），请带上。",
+        "带上学生和一位家长的电子邮箱地址。",
+        "免费照看孩子，提供免费披萨。现场有西班牙语、越南语和普通话翻译。",
+        "在2027年3月2日（星期二）之前提交 Cal Grant 申请，否则可能失去免费的钱。"
+      ],
+      "dates": [
+        { "label": "报名截止日", "date": "2026年11月30日（星期一）", "iso": "2026-11-30", "start": "", "end": "" },
+        { "label": "Financial Aid Night，晚上6:00–7:30", "date": "2026年12月3日（星期四）", "iso": "2026-12-03", "start": "18:00", "end": "19:30" },
+        { "label": "Cal Grant 优先截止日", "date": "2027年3月2日（星期二）", "iso": "2027-03-02", "start": "", "end": "" }
+      ]
+    },
+    "vi": {
+      "title": "Buổi tối miễn phí giúp xin tiền học đại học",
+      "summary": "Hãy đến Financial Aid Night vào thứ Năm, ngày 3 tháng 12 năm 2026, từ 6:00 đến 7:30 tối tại Lakeview Community College. Cố vấn sẽ giúp bạn điền đơn FAFSA hoặc CADAA để nhận tiền học đại học. Vui lòng đăng ký trước thứ Hai, ngày 30 tháng 11 năm 2026.",
+      "checklist": [
+        "Đăng ký trước thứ Hai, ngày 30 tháng 11 năm 2026. Gọi (555) 014-2290 hoặc đến Building A, Room 112.",
+        "Đến Room B-104, Student Center, lúc 6:00 tối thứ Năm, ngày 3 tháng 12 năm 2026.",
+        "Mang theo tờ khai thuế năm 2025 (hoặc mẫu W-2).",
+        "Mang theo số An sinh Xã hội (Social Security) nếu có.",
+        "Mang theo địa chỉ email của sinh viên và của một phụ huynh.",
+        "Có giữ trẻ và pizza miễn phí. Có thông dịch viên tiếng Tây Ban Nha, tiếng Việt và tiếng Quan Thoại.",
+        "Nộp đơn Cal Grant trước thứ Ba, ngày 2 tháng 3 năm 2027, nếu không bạn có thể mất tiền trợ cấp miễn phí."
+      ],
+      "dates": [
+        { "label": "Hạn cuối đăng ký", "date": "Thứ Hai, ngày 30 tháng 11 năm 2026", "iso": "2026-11-30", "start": "", "end": "" },
+        { "label": "Financial Aid Night, 6:00 – 7:30 tối", "date": "Thứ Năm, ngày 3 tháng 12 năm 2026", "iso": "2026-12-03", "start": "18:00", "end": "19:30" },
+        { "label": "Hạn ưu tiên Cal Grant", "date": "Thứ Ba, ngày 2 tháng 3 năm 2027", "iso": "2027-03-02", "start": "", "end": "" }
+      ]
+    }
+  }
+}

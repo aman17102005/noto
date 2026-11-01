@@ -1,0 +1,100 @@
+{
+  "id": "demo-school",
+  "school": "Greenfield Public School, Pune",
+  "className": "Class 6",
+  "students": 45,
+  "createdAt": "2026-11-02",
+  "original": "GREENFIELD PUBLIC SCHOOL, PUNE\nCircular No. GPS/2026-27/48\nDate: 2 November 2026\n\nSubject: Educational Field Trip to Nehru Science Centre, Mumbai — Class 6\n\nDear Parents,\n\nWe are pleased to inform you that the school has organised an educational field trip for the students of Class 6 to the Nehru Science Centre, Worli, Mumbai on Friday, 11 December 2026. The visit will include the Science Odyssey show, the Energy Gallery and a hands-on workshop.\n\nStudents must report to the school by 6:30 AM. The bus will depart at 6:45 AM sharp and return to the school by approximately 7:30 PM.\n\nThe contribution for the trip is ₹450, which covers travel, entry tickets and breakfast. Kindly send the amount in cash along with the signed consent slip (attached below) to the class teacher on or before Monday, 7 December 2026. Students without a signed consent slip will not be permitted to go on the trip.\n\nStudents should wear the school uniform with ID card, and carry a packed lunch, a water bottle and a cap. Mobile phones and valuables are not allowed.\n\nFor any queries, please contact the class teacher, Mrs. Anjali Deshpande, at the school office between 9:00 AM and 1:00 PM.\n\nMr. Rajesh Kulkarni\nPrincipal",
+  "languages": {
+    "en": {
+      "title": "Class 6 trip to Nehru Science Centre, Mumbai",
+      "summary": "Class 6 is going on a school trip to Nehru Science Centre, Mumbai on Friday, 11 December 2026. The trip costs ₹450. Please send the money and the signed form by Monday, 7 December 2026.",
+      "checklist": [
+        "Sign the consent slip. Your child cannot go without it.",
+        "Send ₹450 in cash to the class teacher by Monday, 7 December 2026.",
+        "Bring your child to school by 6:30 AM on Friday, 11 December 2026.",
+        "Your child must wear the school uniform and ID card.",
+        "Pack lunch, a water bottle and a cap.",
+        "Do not send a mobile phone or valuable things.",
+        "Pick up your child from school at about 7:30 PM.",
+        "Questions? Talk to the class teacher, Mrs. Anjali Deshpande, at the school office between 9:00 AM and 1:00 PM."
+      ],
+      "dates": [
+        { "label": "Last day to send ₹450 and the signed form", "date": "Monday, 7 December 2026", "iso": "2026-12-07", "start": "", "end": "" },
+        { "label": "Trip day — be at school by 6:30 AM", "date": "Friday, 11 December 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+      ]
+    },
+    "hi": {
+      "title": "कक्षा 6 की Nehru Science Centre, Mumbai की यात्रा",
+      "summary": "कक्षा 6 के बच्चे शुक्रवार, 11 दिसंबर 2026 को Nehru Science Centre, Mumbai घूमने जाएँगे। इसका खर्च ₹450 है। कृपया पैसे और साइन किया हुआ फ़ॉर्म सोमवार, 7 दिसंबर 2026 तक भेजें।",
+      "checklist": [
+        "अनुमति फ़ॉर्म (consent slip) पर साइन करें। इसके बिना बच्चा नहीं जा सकेगा।",
+        "सोमवार, 7 दिसंबर 2026 तक ₹450 नकद क्लास टीचर को भेजें।",
+        "शुक्रवार, 11 दिसंबर 2026 को सुबह 6:30 बजे तक बच्चे को स्कूल पहुँचाएँ।",
+        "बच्चा स्कूल की यूनिफ़ॉर्म और ID कार्ड पहनकर आए।",
+        "टिफ़िन, पानी की बोतल और टोपी साथ दें।",
+        "मोबाइल फ़ोन या कीमती सामान न भेजें।",
+        "शाम लगभग 7:30 बजे बच्चे को स्कूल से लें।",
+        "कोई सवाल हो तो क्लास टीचर Mrs. Anjali Deshpande से स्कूल ऑफ़िस में सुबह 9:00 से दोपहर 1:00 बजे के बीच मिलें।"
+      ],
+      "dates": [
+        { "label": "₹450 और साइन किया हुआ फ़ॉर्म भेजने की आखिरी तारीख", "date": "सोमवार, 7 दिसंबर 2026", "iso": "2026-12-07", "start": "", "end": "" },
+        { "label": "यात्रा का दिन — सुबह 6:30 बजे तक स्कूल पहुँचें", "date": "शुक्रवार, 11 दिसंबर 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+      ]
+    },
+    "es": {
+      "title": "Excursión de la Clase 6 a Nehru Science Centre, Mumbai",
+      "summary": "La Clase 6 irá de excursión a Nehru Science Centre, Mumbai, el viernes 11 de diciembre de 2026. El viaje cuesta ₹450. Por favor, envíe el dinero y el formulario firmado antes del lunes 7 de diciembre de 2026.",
+      "checklist": [
+        "Firme el formulario de permiso. Sin él, su hijo no puede ir.",
+        "Envíe ₹450 en efectivo a la maestra de la clase antes del lunes 7 de diciembre de 2026.",
+        "Lleve a su hijo a la escuela antes de las 6:30 a. m. el viernes 11 de diciembre de 2026.",
+        "Su hijo debe llevar el uniforme escolar y la credencial (ID).",
+        "Prepare almuerzo, una botella de agua y una gorra.",
+        "No envíe teléfono celular ni cosas de valor.",
+        "Recoja a su hijo en la escuela a las 7:30 p. m., más o menos.",
+        "¿Preguntas? Hable con la maestra de la clase, Mrs. Anjali Deshpande, en la oficina de la escuela, de 9:00 a. m. a 1:00 p. m."
+      ],
+      "dates": [
+        { "label": "Último día para enviar ₹450 y el formulario firmado", "date": "lunes 7 de diciembre de 2026", "iso": "2026-12-07", "start": "", "end": "" },
+        { "label": "Día de la excursión — llegar a la escuela a las 6:30 a. m.", "date": "viernes 11 de diciembre de 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+      ]
+    },
+    "zh": {
+      "title": "六年级去 Nehru Science Centre, Mumbai 参观",
+      "summary": "六年级学生将于2026年12月11日（星期五）去 Nehru Science Centre, Mumbai 参观。费用是₹450。请在2026年12月7日（星期一）之前交钱和签好的同意书。",
+      "checklist": [
+        "在同意书上签字。没有同意书，孩子不能去。",
+        "在2026年12月7日（星期一）之前，把₹450现金交给班主任。",
+        "2026年12月11日（星期五）早上6:30之前送孩子到学校。",
+        "孩子要穿校服，戴学生证。",
+        "带午饭、水瓶和帽子。",
+        "不要带手机或贵重物品。",
+        "晚上大约7:30到学校接孩子。",
+        "有问题？请在上午9:00到下午1:00之间到学校办公室找班主任 Mrs. Anjali Deshpande。"
+      ],
+      "dates": [
+        { "label": "交₹450和同意书的最后一天", "date": "2026年12月7日（星期一）", "iso": "2026-12-07", "start": "", "end": "" },
+        { "label": "参观日——早上6:30前到学校", "date": "2026年12月11日（星期五）", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+      ]
+    },
+    "vi": {
+      "title": "Lớp 6 đi tham quan Nehru Science Centre, Mumbai",
+      "summary": "Học sinh lớp 6 sẽ đi tham quan Nehru Science Centre, Mumbai vào thứ Sáu, ngày 11 tháng 12 năm 2026. Chi phí là ₹450. Vui lòng gửi tiền và giấy đồng ý đã ký trước thứ Hai, ngày 7 tháng 12 năm 2026.",
+      "checklist": [
+        "Ký giấy đồng ý. Không có giấy này, con không được đi.",
+        "Gửi ₹450 tiền mặt cho giáo viên chủ nhiệm trước thứ Hai, ngày 7 tháng 12 năm 2026.",
+        "Đưa con đến trường trước 6:30 sáng thứ Sáu, ngày 11 tháng 12 năm 2026.",
+        "Con phải mặc đồng phục và đeo thẻ học sinh.",
+        "Chuẩn bị cơm trưa, chai nước và mũ.",
+        "Không cho con mang điện thoại hoặc đồ có giá trị.",
+        "Đón con ở trường vào khoảng 7:30 tối.",
+        "Có câu hỏi? Hãy gặp giáo viên chủ nhiệm Mrs. Anjali Deshpande tại văn phòng trường, từ 9:00 sáng đến 1:00 chiều."
+      ],
+      "dates": [
+        { "label": "Hạn cuối gửi ₹450 và giấy đồng ý", "date": "Thứ Hai, ngày 7 tháng 12 năm 2026", "iso": "2026-12-07", "start": "", "end": "" },
+        { "label": "Ngày tham quan — có mặt ở trường trước 6:30 sáng", "date": "Thứ Sáu, ngày 11 tháng 12 năm 2026", "iso": "2026-12-11", "start": "06:30", "end": "19:30" }
+      ]
+    }
+  }
+}
