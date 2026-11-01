@@ -1,0 +1,14 @@
+{
+  "name": "noto",
+  "version": "0.1.0",
+  "description": "Turn any school notice into a simple summary, checklist and dates in 5 languages — shared with one QR code.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,18 @@
+# Secrets — never commit these
+.env
+.env.local
+.env.*.local
+*.pem
+serviceAccount*.json
+
+# Dependencies and tool folders
+node_modules/
+.vercel/
+.firebase/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
