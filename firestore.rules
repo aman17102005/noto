@@ -31,13 +31,13 @@ service cloud.firestore {
              && a.classes is list && a.classes.size() >= 1 && a.classes.size() <= 30);
     }
 
+    // A notice must have exactly these fields. "students" is optional: null, or a whole number from 1 to 5000.
     function validNotice(d) {
       return d.keys().hasOnly(['ownerId', 'school', 'audience', 'students', 'createdAt', 'original', 'languages', 'published'])
         && d.keys().hasAll(['ownerId', 'school', 'audience', 'students', 'createdAt', 'original', 'languages', 'published'])
         && d.ownerId is string
         && d.school is string && d.school.size() <= 150
         && validAudience(d.audience)
-        // students is optional: null, or a whole number from 1 to 5000
         && (d.students == null || d.students is int && d.students >= 1 && d.students <= 5000)
         && d.createdAt is timestamp
         && d.original is string && d.original.size() > 0 && d.original.size() <= 20000

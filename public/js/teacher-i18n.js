@@ -114,6 +114,8 @@ export const STRINGS = {
     errDateText: '{lang}: a date is missing its text.',
     errOriginalEmpty: 'The original notice text is empty.',
     errPublish: 'Could not publish the notice. Please try again.',
+    errPublishRules: 'The database refused to save this notice. The Firestore security rules may be out of date: paste the latest firestore.rules into the Firebase console (Firestore Database → Rules) and click Publish.',
+    errPublishOffline: 'Could not save — no internet connection. Please try again.',
 
     shareTitle: 'Ready to share 🎉',
     linkTitle: 'Link',
@@ -245,6 +247,8 @@ export const STRINGS = {
     errDateText: '{lang}: किसी तारीख का पाठ खाली है।',
     errOriginalEmpty: 'असली नोटिस का पाठ खाली है।',
     errPublish: 'नोटिस प्रकाशित नहीं हो सका। कृपया फिर से कोशिश करें।',
+    errPublishRules: 'डेटाबेस ने यह नोटिस सेव करने से मना कर दिया। कृपया नोटो सेट करने वाले व्यक्ति से सुरक्षा नियम अपडेट करने को कहें।',
+    errPublishOffline: 'सेव नहीं हो सका — इंटरनेट कनेक्शन नहीं है। कृपया फिर से कोशिश करें।',
 
     shareTitle: 'भेजने के लिए तैयार 🎉',
     linkTitle: 'लिंक',
@@ -376,6 +380,8 @@ export const STRINGS = {
     errDateText: '{lang}: a una fecha le falta el texto.',
     errOriginalEmpty: 'El texto original del aviso está vacío.',
     errPublish: 'No se pudo publicar el aviso. Intente de nuevo.',
+    errPublishRules: 'La base de datos no permitió guardar este aviso. Pida a la persona que configuró Noto que actualice las reglas de seguridad.',
+    errPublishOffline: 'No se pudo guardar: no hay conexión a internet. Intente de nuevo.',
 
     shareTitle: 'Listo para compartir 🎉',
     linkTitle: 'Enlace',
@@ -507,6 +513,8 @@ export const STRINGS = {
     errDateText: '{lang}：有日期缺少文字。',
     errOriginalEmpty: '通知原文为空。',
     errPublish: '通知发布失败，请重试。',
+    errPublishRules: '数据库拒绝保存这份通知。请联系设置本系统的人员更新安全规则。',
+    errPublishOffline: '保存失败：没有网络连接，请重试。',
 
     shareTitle: '可以分享了 🎉',
     linkTitle: '链接',
@@ -638,6 +646,8 @@ export const STRINGS = {
     errDateText: '{lang}: một ngày đang thiếu nội dung.',
     errOriginalEmpty: 'Nội dung thông báo gốc đang trống.',
     errPublish: 'Không đăng được thông báo. Vui lòng thử lại.',
+    errPublishRules: 'Cơ sở dữ liệu không cho lưu thông báo này. Vui lòng nhờ người cài đặt Noto cập nhật quy tắc bảo mật.',
+    errPublishOffline: 'Không lưu được — không có kết nối mạng. Vui lòng thử lại.',
 
     shareTitle: 'Sẵn sàng chia sẻ 🎉',
     linkTitle: 'Đường dẫn',

@@ -440,8 +440,10 @@ async function onPublish() {
     renderShare();
     show('step-share');
   } catch (err) {
-    console.error(err);
-    showError('publish-error', 'errPublish');
+    // Firebase tells us why: "permission-denied" means the security rules said no
+    console.error('Publish failed:', err.code, err.message);
+    const key = { 'permission-denied': 'errPublishRules', unavailable: 'errPublishOffline' }[err.code] || 'errPublish';
+    showError('publish-error', key);
   } finally {
     btn.disabled = false;
   }
