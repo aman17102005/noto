@@ -164,6 +164,15 @@ async function loadNotice() {
     return;
   }
 
+  // TEMPORARY (Stage 3): a notice published on this same browser by the teacher page.
+  // Removed in Stage 4, when notices are saved in the database.
+  const local = store.get(`noto.local.${state.id}`);
+  if (local) {
+    state.notice = JSON.parse(local);
+    render();
+    return;
+  }
+
   // Demo notices are plain files. Real notices come from the database (added in Stage 4).
   const url = state.id.startsWith('demo-')
     ? `/demo/${state.id}.json`
