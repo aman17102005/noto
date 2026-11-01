@@ -137,9 +137,8 @@ async function handleApi(req, res, url) {
   res.json = (data) => sendJson(res, res.statusCode || 200, data);
   res.send = (text) => res.end(String(text));
 
-  // The "?t=" part makes Node reload the file after you edit it
-  const mtime = fs.statSync(filePath).mtimeMs;
-  const mod = await import(pathToFileURL(filePath).href + '?t=' + mtime);
+  // "npm run dev" uses node --watch, which restarts this server when an api/ file changes
+  const mod = await import(pathToFileURL(filePath).href);
   await mod.default(req, res);
 }
 

@@ -8,11 +8,20 @@ Noto turns an English school notice into a short, simple summary, a checklist an
 
 ## Run locally
 
+Needs Node.js 20.12 or newer. No packages to install.
+
 ```bash
-npm run dev
+cp .env.example .env.local   # then paste your Gemini API key into .env.local
+npm run dev                  # starts http://localhost:3000
 ```
 
-Then open http://localhost:3000/n/demo-school
+- Demo notice: http://localhost:3000/n/demo-school
+- Try the AI from the terminal: `npm run try -- samples/ptm-notice.txt`
+- Run the tests: `npm test`
+
+## AI model
+
+Noto uses Google's Gemini API (free tier): `gemini-3.5-flash-lite`, with `gemini-3.1-flash-lite` as a fallback. In our test on 1 Nov 2026 these answered in about 6 seconds, while `gemini-3.8-flash` took about 96 seconds on the free tier — too slow for a teacher to wait.
 
 ## License
 

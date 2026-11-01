@@ -3,7 +3,7 @@
   "outputDirectory": "public",
   "cleanUrls": true,
   "functions": {
-    "api/generate.js": { "maxDuration": 90 }
+    "api/generate.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/n/:id", "destination": "/notice" }

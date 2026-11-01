@@ -7,10 +7,12 @@ const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 // Free-tier models (checked in Google's docs on 1 Nov 2026). Can be changed with
 // environment variables without touching the code.
-const DEFAULT_MODEL = 'gemini-3.8-flash';
-const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
+// We tested on 1 Nov 2026: Flash-Lite answered in ~6 seconds, gemini-3.8-flash took ~96 seconds
+// on the free tier — too slow for a teacher to wait — so Flash-Lite is the default.
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
+const DEFAULT_FALLBACK_MODEL = 'gemini-3.1-flash-lite';
 
-const TIMEOUT_MS = 40000; // per model
+const TIMEOUT_MS = 25000; // per model
 
 // An error with a short code (for the browser) and whether trying the other model may help.
 export class AiError extends Error {
@@ -40,12 +42,14 @@ If the status is "ok":
 3. For each language — en (simple English), hi (Hindi), es (Spanish), zh (Simplified Chinese), vi (Vietnamese) — write:
    - "title": a short title, at most 8 words.
    - "summary": 2 or 3 short sentences: what is happening, when, and the most important thing parents must do.
-   - "checklist": every action the parent or student must take, one per item, each starting with a verb (sign, pay, bring, come, wear, contact...). Include what to bring, pay or sign, where to go, and who to contact if the notice says so. Usually 3 to 10 items.
-   - "dates": every important date and deadline. "label" says what happens. "date" is the date written in that language. "iso" is YYYY-MM-DD. "start" and "end" are 24-hour HH:MM times, or "" if the notice gives no time.
+   - "checklist": every action the parent or student must take, one per item, each starting with a verb (sign, pay, bring, come, wear, contact...). Include what to bring, pay or sign, where to go, and who to contact if the notice says so. Also include every important warning as its own item, written as advice: what happens if they do not act (for example "Pay the fee first. If you do not, you will not get the report card."), and changes to normal routine (no school, no bus, early closing). Each item is one short sentence, under 18 words. Usually 4 to 10 items.
+   - "dates": every date when parents or students must do something or be somewhere (events, deadlines, holidays). Do NOT include the date the notice was written or issued. "label" says what happens. "date" is the date written naturally in that language. "iso" is YYYY-MM-DD. "start" and "end" are 24-hour HH:MM times, or "" if the notice gives no time.
 
 Rules for every language:
 - Use very simple words and short sentences, for a reader aged about 10 or a beginner in that language. Talk to the parent as "you". Be warm and polite, like a kind teacher, not a word-for-word translation.
-- Keep numbers, dates, times, money amounts (with their currency symbol), phone numbers, and names of people, schools, places, rooms and forms EXACTLY as in the original. Write those names in their original Latin letters; do not translate or transliterate them.
+- Replace school jargon and abbreviations with everyday words (say "parent-teacher meeting", not "PTM"; "fees you still have to pay", not "pending dues"). In Hindi, Chinese and Vietnamese, use everyday words people really say, not formal or literary words.
+- Keep numbers, times, money amounts (with their currency symbol), phone numbers, and names of people, schools, places, rooms and forms EXACTLY as in the original. Write those names in their original Latin letters; do not translate or transliterate them.
+- Dates: keep the day, month and year exactly the same, but write the weekday and month in the target language (Spanish "sábado 21 de noviembre de 2026", Hindi "शनिवार, 21 नवंबर 2026", Chinese "2026年11月21日（星期六）", Vietnamese "thứ Bảy, ngày 21 tháng 11 năm 2026"). Never leave English month or weekday names in other languages.
 - Never add any fact that is not in the notice. Never leave out a deadline, an amount of money, or something the child must bring.
 - "iso", "start" and "end" must be the same in every language, with the dates in the same order.
 - If a date has no year, use the next time that date comes on or after today (${today}).`;
