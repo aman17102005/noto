@@ -9,17 +9,36 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/css/style.css" />
     <script src="/vendor/qrcode.js" defer></script>
-    <script src="/js/teacher.js" defer></script>
+    <script src="/js/teacher.js" type="module"></script>
   </head>
   <body>
     <header class="topbar">
-      <div class="container">
-        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto</a>
-        <span class="pill">Teacher</span>
+      <div class="container topbar-row">
+        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto<span class="pill">Teacher</span></a>
+        <nav class="teacher-nav" id="teacher-nav" aria-label="Teacher menu" hidden>
+          <a href="/teacher" aria-current="page">Create</a>
+          <a href="/dashboard">Dashboard</a>
+          <button class="link-btn" type="button" id="sign-out">Sign out</button>
+        </nav>
       </div>
     </header>
 
     <main class="container">
+      <p class="status" id="auth-loading" role="status">Loading…</p>
+
+      <!-- Shown when the teacher is not signed in -->
+      <section id="auth-gate" hidden>
+        <div class="card center login-card">
+          <h1>Teacher login</h1>
+          <p class="muted">Sign in with your Google account to create notices and see how many parents opened them. Parents never need to log in.</p>
+          <button class="btn btn-primary btn-big btn-block" type="button" id="sign-in">Sign in with Google</button>
+          <div class="alert" id="auth-error" role="alert" hidden></div>
+        </div>
+      </section>
+
+      <div id="app" hidden>
+      <p class="hint" id="signed-in-as">Signed in as <strong id="teacher-name"></strong></p>
+
       <!-- Step 1: paste or photograph the notice -->
       <section id="step-input">
         <h1 class="page-title">Create a notice for parents</h1>
@@ -120,8 +139,12 @@
           </div>
         </div>
 
-        <button class="btn btn-secondary btn-block" type="button" id="new-btn">+ Create another notice</button>
+        <div class="actions">
+          <a class="btn btn-secondary" href="/dashboard">See dashboard</a>
+          <button class="btn btn-secondary" type="button" id="new-btn">+ Create another notice</button>
+        </div>
       </section>
+      </div>
     </main>
 
     <footer class="footer">

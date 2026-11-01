@@ -1,9 +1,10 @@
-// POST /api/generate
+// POST /api/generate   (teachers only: needs "Authorization: Bearer <Firebase login token>")
 // Body: { "text": "the notice..." }  or  { "image": { "mimeType": "image/jpeg", "data": "<base64>" } }
 // Answer: { "notice": { school, original, languages: { en, hi, es, zh, vi }, warnings }, "model": "..." }
 // On a problem: { "code": "unclear", "error": "A friendly message for the teacher" }
 
 import { generateNotice } from './_lib/gemini.js';
+import { verifyTeacher } from './_lib/firebase.js';
 
 const MAX_TEXT = 15000; // characters
 const MIN_TEXT = 30;
@@ -26,6 +27,7 @@ const MESSAGES = {
   network: [502, () => 'Could not reach the AI service. Please try again.'],
   ai_error: [502, () => 'The AI service had a problem. Please try again in a minute.'],
   server_key: [500, () => 'The AI is not set up correctly on the server (check the GEMINI_API_KEY setting).'],
+  login: [401, () => 'Please sign in again to create a notice.'],
 };
 
 function sendError(res, code, detail = '') {
@@ -40,6 +42,11 @@ export default async function handler(req, res) {
   }
   if (!process.env.GEMINI_API_KEY) {
     sendError(res, 'server_key');
+    return;
+  }
+  // Only signed-in teachers may use the AI, so strangers cannot use up the free quota
+  if (!(await verifyTeacher(req))) {
+    sendError(res, 'login');
     return;
   }
 

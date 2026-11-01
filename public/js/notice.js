@@ -164,16 +164,7 @@ async function loadNotice() {
     return;
   }
 
-  // TEMPORARY (Stage 3): a notice published on this same browser by the teacher page.
-  // Removed in Stage 4, when notices are saved in the database.
-  const local = store.get(`noto.local.${state.id}`);
-  if (local) {
-    state.notice = JSON.parse(local);
-    render();
-    return;
-  }
-
-  // Demo notices are plain files. Real notices come from the database (added in Stage 4).
+  // Demo notices are plain files. Real notices come from the database through our API.
   const url = state.id.startsWith('demo-')
     ? `/demo/${state.id}.json`
     : `/api/notice?id=${encodeURIComponent(state.id)}`;
@@ -187,10 +178,40 @@ async function loadNotice() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     state.notice = await res.json();
     render();
+    countView();
   } catch (err) {
     console.error(err);
     showStatus(LANGS[state.lang].ui.error, true);
   }
+}
+
+// ---------- Counting unique opens (no personal data) ----------
+
+// A random ID made on this phone, like "q3V9-xK2..." — it says nothing about the parent.
+function visitorId() {
+  let id = store.get('noto.visitor');
+  if (!id) {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    id = btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    store.set('noto.visitor', id);
+  }
+  return id;
+}
+
+function countView() {
+  if (state.id.startsWith('demo-')) return; // demos are not counted
+  if (store.get(`noto.own.${state.id}`)) return; // the teacher who published it, on their own phone
+  if (store.get(`noto.seen.${state.id}`)) return; // this phone was already counted
+  fetch('/api/view', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: state.id, visitor: visitorId() }),
+    keepalive: true,
+  })
+    .then((res) => res.ok && store.set(`noto.seen.${state.id}`, '1'))
+    .catch(() => {
+      /* counting is not important enough to bother the parent */
+    });
 }
 
 function showStatus(message, withRetry = false) {

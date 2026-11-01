@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noindex" />
+    <title>Dashboard — Noto</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/dashboard.js" type="module"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-row">
+        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto<span class="pill">Teacher</span></a>
+        <nav class="teacher-nav" id="teacher-nav" aria-label="Teacher menu" hidden>
+          <a href="/teacher">Create</a>
+          <a href="/dashboard" aria-current="page">Dashboard</a>
+          <button class="link-btn" type="button" id="sign-out">Sign out</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <p class="status" id="auth-loading" role="status">Loading…</p>
+
+      <section id="auth-gate" hidden>
+        <div class="card center login-card">
+          <h1>Teacher login</h1>
+          <p class="muted">Sign in with your Google account to see your notices and how many parents opened them.</p>
+          <button class="btn btn-primary btn-big btn-block" type="button" id="sign-in">Sign in with Google</button>
+          <div class="alert" id="auth-error" role="alert" hidden></div>
+        </div>
+      </section>
+
+      <div id="app" hidden>
+        <p class="hint">Signed in as <strong id="teacher-name"></strong></p>
+        <div class="dash-head">
+          <h1 class="page-title">Your notices</h1>
+          <a class="btn btn-primary btn-small" href="/teacher">+ New notice</a>
+        </div>
+        <p class="muted">"Opened" counts each phone once. Parents' names or numbers are never collected.</p>
+
+        <div class="alert" id="dash-error" role="alert" hidden></div>
+        <p class="status" id="dash-loading" role="status">Loading your notices…</p>
+
+        <div class="card center" id="dash-empty" hidden>
+          <h2>No notices yet</h2>
+          <p class="muted">Create your first notice — it takes about a minute.</p>
+          <a class="btn btn-primary" href="/teacher">Create a notice</a>
+        </div>
+
+        <ul class="notice-list" id="notice-list"></ul>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>Noto · Translations are made by AI.</p>
+    </footer>
+  </body>
+</html>

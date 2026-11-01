@@ -600,6 +600,97 @@ a {
   margin: 0.5rem 0 0;
 }
 
+/* ---------- Teacher header, login, dashboard ---------- */
+
+.topbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.teacher-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.teacher-nav a,
+.link-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--primary);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.teacher-nav a[aria-current="page"] {
+  background: var(--primary-soft);
+}
+
+.login-card {
+  margin-top: 2rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.dash-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.notice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notice-row h2 {
+  margin-bottom: 0.1rem;
+}
+
+.opened {
+  margin: 0.6rem 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.open-count {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.bar {
+  height: 12px;
+  margin-bottom: 0.9rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+
+.btn-danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 /* ---------- Wider screens ---------- */
 
 @media (min-width: 40rem) {

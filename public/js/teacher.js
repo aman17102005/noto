@@ -2,8 +2,9 @@
 // Step 1: paste text or add a photo → the AI writes 5 languages (via /api/generate)
 // Step 2: the teacher checks and edits every language
 // Step 3: publish → link, QR code, WhatsApp message
+// Teachers must be signed in (Google login, handled by auth.js).
 
-'use strict';
+import { setupTeacherPage, loginToken, saveNotice } from './auth.js';
 
 const LANGS = [
   { code: 'en', name: 'English', htmlLang: 'en' },
@@ -180,7 +181,7 @@ async function onCreate(event) {
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await loginToken()}` },
       body: JSON.stringify({
         text,
         image: state.image && { mimeType: state.image.mimeType, data: state.image.data },
@@ -372,6 +373,12 @@ async function onPublish() {
   btn.disabled = true;
   try {
     await saveNotice(notice);
+    // So the teacher opening their own link on this phone is not counted as a parent
+    try {
+      localStorage.setItem(`noto.own.${notice.id}`, '1');
+    } catch {
+      /* ignore */
+    }
     state.published = notice;
     renderShare(notice);
     show('step-share');
@@ -381,12 +388,6 @@ async function onPublish() {
   } finally {
     btn.disabled = false;
   }
-}
-
-// TEMPORARY (Stage 3): saves the notice in this browser only, so the whole flow can be
-// tested before the database exists. Stage 4 replaces this with Firestore.
-async function saveNotice(notice) {
-  localStorage.setItem(`noto.local.${notice.id}`, JSON.stringify(notice));
 }
 
 // ---------- Step 3: share ----------
@@ -517,6 +518,9 @@ function startAgain() {
 }
 
 // ---------- Start ----------
+
+// Module scripts run after the page has loaded, so we can set up straight away
+setupTeacherPage({ onSignedIn: () => {} });
 
 document.addEventListener('DOMContentLoaded', () => {
   $('notice-text').addEventListener('input', (e) => {

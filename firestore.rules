@@ -1,0 +1,71 @@
+rules_version = '2';
+
+// Noto — Firestore security rules.
+// Paste this into Firebase console → Firestore Database → Rules → Publish.
+//
+//   notices/{noticeId}                  one school notice (all 5 languages)
+//   notices/{noticeId}/views/{visitor}  one empty document per phone that opened it
+//
+// Who can do what:
+//   - Anyone can READ a published notice (parents need no login).
+//   - Anyone can ADD a view to a published notice, but only an empty one, never change or delete it.
+//   - Only a signed-in teacher can CREATE a notice, and it is saved under their own user ID.
+//   - Only the teacher who created a notice can EDIT or DELETE it, or COUNT its views.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(data) {
+      return signedIn() && data.ownerId == request.auth.uid;
+    }
+
+    function validNotice(d) {
+      return d.keys().hasOnly(['ownerId', 'school', 'className', 'students', 'createdAt', 'original', 'languages', 'published'])
+        && d.keys().hasAll(['ownerId', 'school', 'className', 'students', 'createdAt', 'original', 'languages', 'published'])
+        && d.ownerId is string
+        && d.school is string && d.school.size() <= 150
+        && d.className is string && d.className.size() > 0 && d.className.size() <= 60
+        && d.students is int && d.students >= 1 && d.students <= 1000
+        && d.createdAt is timestamp
+        && d.original is string && d.original.size() > 0 && d.original.size() <= 20000
+        && d.languages is map
+        && d.languages.keys().hasOnly(['en', 'hi', 'es', 'zh', 'vi'])
+        && d.languages.keys().hasAll(['en', 'hi', 'es', 'zh', 'vi'])
+        && d.published is bool;
+    }
+
+    match /notices/{noticeId} {
+      allow get: if resource.data.published == true || isOwner(resource.data);
+      allow list: if isOwner(resource.data); // the dashboard asks only for "my notices"
+
+      allow create: if signedIn()
+        && noticeId.matches('^[a-z0-9]{8,32}$')
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && validNotice(request.resource.data);
+
+      allow update: if isOwner(resource.data)
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && validNotice(request.resource.data);
+
+      allow delete: if isOwner(resource.data);
+
+      match /views/{visitorId} {
+        allow create: if visitorId.matches('^[A-Za-z0-9_-]{16,64}$')
+          && request.resource.data.size() == 0
+          && get(/databases/$(database)/documents/notices/$(noticeId)).data.published == true;
+
+        // Counting views ("38 of 45 opened") is only for the notice's teacher
+        allow list: if signedIn()
+          && get(/databases/$(database)/documents/notices/$(noticeId)).data.ownerId == request.auth.uid;
+
+        allow get, update, delete: if false;
+      }
+    }
+  }
+}
