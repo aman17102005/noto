@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="A school notice in simple words, in your language." />
+    <title>School notice — Noto</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/notice.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container">
+        <a class="brand" href="/"><span class="brand-dot" aria-hidden="true"></span>Noto</a>
+        <nav class="lang-bar" aria-label="Choose language">
+          <button class="lang-btn" type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+          <button class="lang-btn" type="button" data-lang="hi" lang="hi" aria-pressed="false">हिन्दी</button>
+          <button class="lang-btn" type="button" data-lang="es" lang="es" aria-pressed="false">Español</button>
+          <button class="lang-btn" type="button" data-lang="zh" lang="zh-CN" aria-pressed="false">中文</button>
+          <button class="lang-btn" type="button" data-lang="vi" lang="vi" aria-pressed="false">Tiếng Việt</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="status" id="status" role="status">Loading…</div>
+
+      <article class="notice" id="notice" hidden>
+        <p class="from" id="from"></p>
+        <h1 id="title"></h1>
+        <p class="summary" id="summary"></p>
+
+        <button class="btn btn-primary btn-listen" id="listen" type="button" hidden>
+          <span class="icon" aria-hidden="true">🔊</span><span id="listen-text">Listen</span>
+        </button>
+
+        <section class="card" aria-labelledby="h-checklist">
+          <h2 id="h-checklist">What you need to do</h2>
+          <ul class="checklist" id="checklist"></ul>
+        </section>
+
+        <section class="card" id="dates-card" aria-labelledby="h-dates">
+          <h2 id="h-dates">Important dates</h2>
+          <ul class="dates" id="dates"></ul>
+        </section>
+
+        <details class="card original">
+          <summary id="h-original">Show original notice</summary>
+          <pre id="original" lang="en"></pre>
+        </details>
+      </article>
+    </main>
+
+    <footer class="footer">
+      <p id="disclaimer">Translated by AI. If unsure, please check with the school.</p>
+    </footer>
+  </body>
+</html>
